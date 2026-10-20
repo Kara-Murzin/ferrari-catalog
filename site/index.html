@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<title>Ferrari Catalog</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0e10; --surface: #17171a; --surface-2: #1f1f23; --line: #2a2a2f;
+    --text: #f2f2f2; --muted: #9a9aa2; --accent: #d40000; --accent-soft: rgba(212,0,0,.14);
+    --radius: 14px;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--text);
+    font: 15px/1.5 Inter, system-ui, -apple-system, sans-serif; -webkit-font-smoothing: antialiased; }
+  a { color: inherit; }
+  .wrap { max-width: 1240px; margin: 0 auto; padding: 0 16px; }
+
+  header { border-bottom: 1px solid var(--line); }
+  header .wrap { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding-top: 28px; padding-bottom: 22px; flex-wrap: wrap; }
+  h1 { font: 600 30px/1.1 "Playfair Display", serif; margin: 0; letter-spacing: .3px; }
+  h1 span { color: var(--accent); }
+  .meta { color: var(--muted); font-size: 13px; }
+
+  .toolbar { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; padding: 20px 0 8px; }
+  .chips { display: flex; gap: 8px; flex-wrap: wrap; flex: 1 1 520px; min-width: 0; }
+  @media (max-width: 640px) {
+    .chips { flex-wrap: nowrap; overflow-x: auto; margin: 0 -16px; padding: 0 16px 4px; scrollbar-width: none; }
+    .chips::-webkit-scrollbar { display: none; }
+    h1 { font-size: 26px; }
+  }
+  .chip { border: 1px solid var(--line); background: var(--surface); color: var(--text); border-radius: 999px;
+    padding: 7px 14px; font: inherit; font-size: 13px; cursor: pointer; white-space: nowrap; }
+  .chip:hover { border-color: #444; }
+  .chip.on { background: var(--accent); border-color: var(--accent); }
+  .chip small { color: var(--muted); margin-left: 4px; }
+  .chip.on small { color: rgba(255,255,255,.75); }
+  select { background: var(--surface); color: var(--text); border: 1px solid var(--line); border-radius: 10px;
+    padding: 8px 12px; font: inherit; font-size: 13px; }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 18px; padding: 14px 0 60px; }
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden;
+    cursor: pointer; transition: transform .15s ease, border-color .15s ease; text-align: left; padding: 0; color: inherit; font: inherit; }
+  .card:hover { transform: translateY(-3px); border-color: #3a3a40; }
+  .ph { aspect-ratio: 4/3; background: var(--surface-2); position: relative; overflow: hidden; }
+  .ph img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .badge { position: absolute; top: 10px; left: 10px; background: rgba(0,0,0,.65); backdrop-filter: blur(4px);
+    padding: 3px 9px; border-radius: 999px; font-size: 12px; }
+  .card .body { padding: 14px 16px 16px; }
+  .card h3 { margin: 0; font-size: 17px; font-weight: 600; }
+  .card .sub { color: var(--muted); font-size: 13px; margin-top: 2px; }
+  .card .price { margin-top: 12px; font-size: 20px; font-weight: 600; }
+  .card .price small { color: var(--muted); font-size: 12px; font-weight: 400; margin-left: 4px; }
+  .empty { color: var(--muted); padding: 60px 0; text-align: center; grid-column: 1/-1; }
+
+  /* Detail */
+  .detail { position: fixed; inset: 0; background: var(--bg); overflow-y: auto; z-index: 10; display: none; }
+  .detail.open { display: block; }
+  .detail .top { position: sticky; top: 0; background: rgba(14,14,16,.9); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); z-index: 2; }
+  .detail .top .wrap { display: flex; align-items: center; gap: 12px; padding-top: 12px; padding-bottom: 12px; }
+  .back { background: none; border: 1px solid var(--line); color: var(--text); border-radius: 10px; padding: 7px 12px; font: inherit; font-size: 13px; cursor: pointer; }
+  .dgrid { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: 28px; padding: 24px 0 60px; }
+  @media (max-width: 900px) { .dgrid { grid-template-columns: 1fr; } }
+  .stage { position: relative; aspect-ratio: 4/3; background: var(--surface-2); border-radius: var(--radius); overflow: hidden; }
+  .stage img { width: 100%; height: 100%; object-fit: contain; display: block; background: #000; }
+  .nav { position: absolute; top: 50%; transform: translateY(-50%); width: 42px; height: 42px; border-radius: 50%;
+    border: 0; background: rgba(0,0,0,.55); color: #fff; font-size: 20px; cursor: pointer; }
+  .nav.prev { left: 10px; } .nav.next { right: 10px; }
+  .count { position: absolute; bottom: 10px; right: 12px; background: rgba(0,0,0,.6); padding: 2px 9px; border-radius: 999px; font-size: 12px; }
+  .thumbs { display: flex; gap: 8px; overflow-x: auto; padding: 10px 0 4px; scrollbar-width: thin; }
+  .thumbs img { width: 92px; height: 69px; object-fit: cover; border-radius: 8px; cursor: pointer; opacity: .55; border: 2px solid transparent; flex: none; }
+  .thumbs img.on { opacity: 1; border-color: var(--accent); }
+  .info h2 { font: 600 30px/1.15 "Playfair Display", serif; margin: 0; }
+  .info .sub { color: var(--muted); margin-top: 6px; }
+  .info .price { font-size: 30px; font-weight: 600; margin: 18px 0 2px; }
+  .info .price-note { color: var(--muted); font-size: 13px; }
+  table { width: 100%; border-collapse: collapse; margin-top: 22px; font-size: 14px; }
+  td { padding: 9px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+  td:first-child { color: var(--muted); width: 45%; }
+  .src { display: inline-block; margin-top: 14px; padding: 8px 14px; border: 1px solid var(--accent); border-radius: 10px;
+    color: #ffb3b3; text-decoration: none; font-size: 13px; }
+  .src:hover { background: var(--accent-soft); }
+  .feat { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 20px; }
+  .feat span { background: var(--accent-soft); color: #ffb3b3; border-radius: 999px; padding: 4px 10px; font-size: 12px; }
+  footer { color: var(--muted); font-size: 12px; border-top: 1px solid var(--line); padding: 18px 0 30px; }
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <h1><span>Ferrari</span> in Japan</h1>
+    <div class="meta" id="meta"></div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="toolbar">
+    <div class="chips" id="chips"></div>
+    <select id="sort" aria-label="Sort">
+      <option value="new">Newest first</option>
+      <option value="price-asc">Price: low to high</option>
+      <option value="price-desc">Price: high to low</option>
+      <option value="km">Lowest mileage</option>
+    </select>
+  </div>
+  <div class="grid" id="grid"></div>
+</main>
+
+<footer><div class="wrap">Prices are in Japanese yen as listed in Japan. Availability changes daily.</div></footer>
+
+<section class="detail" id="detail" aria-hidden="true">
+  <div class="top"><div class="wrap"><button class="back" id="back">← All cars</button></div></div>
+  <div class="wrap dgrid" id="dbody"></div>
+</section>
+
+<script src="data.js"></script>
+<script>
+(() => {
+  const data = window.CATALOG || { cars: [], updated: null };
+  const cars = data.cars;
+  const $ = (id) => document.getElementById(id);
+  const yen = (n) => n == null ? "Price on request" : "¥" + n.toLocaleString("en-US");
+  const kmf = (n) => n == null ? "—" : n.toLocaleString("en-US") + " km";
+  const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  const title = (c) => `${c.make} ${c.model}${c.grade ? " " + c.grade : ""}`;
+  const img = (src, fallback, alt, cls = "") =>
+    `<img src="${esc(src)}" ${fallback ? `onerror="this.onerror=null;this.src='${esc(fallback)}'"` : ""} alt="${esc(alt)}" loading="lazy" referrerpolicy="no-referrer" ${cls}>`;
+
+  // Admin mode (source links): open once with ?admin, turn off with ?admin=0. Remembered in this browser.
+  const q = new URLSearchParams(location.search);
+  let admin = false;
+  try {
+    if (q.has("admin")) localStorage.setItem("admin", q.get("admin") === "0" ? "" : "1");
+    admin = !!localStorage.getItem("admin");
+  } catch (e) { admin = q.has("admin") && q.get("admin") !== "0"; }
+
+  let model = "All";
+  const updated = data.updated ? new Date(data.updated).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "";
+  $("meta").textContent = `${cars.length} cars · 2024+ · under 50,000 km${updated ? " · updated " + updated : ""}`;
+
+  function renderChips() {
+    const counts = {};
+    cars.forEach((c) => (counts[c.model] = (counts[c.model] || 0) + 1));
+    const models = Object.keys(counts).sort();
+    $("chips").innerHTML = ["All", ...models].map((m) =>
+      `<button class="chip${m === model ? " on" : ""}" data-m="${esc(m)}">${esc(m)}<small>${m === "All" ? cars.length : counts[m]}</small></button>`).join("");
+  }
+
+  function renderGrid() {
+    const sort = $("sort").value;
+    const list = cars.filter((c) => model === "All" || c.model === model).slice();
+    const P = (c) => c.price_jpy ?? Infinity;
+    if (sort === "price-asc") list.sort((a, b) => P(a) - P(b));
+    if (sort === "price-desc") list.sort((a, b) => (b.price_jpy ?? -1) - (a.price_jpy ?? -1));
+    if (sort === "km") list.sort((a, b) => (a.mileage_km ?? 1e9) - (b.mileage_km ?? 1e9));
+    if (sort === "new") list.sort((a, b) => b.year - a.year || (a.mileage_km ?? 0) - (b.mileage_km ?? 0));
+    $("grid").innerHTML = list.length ? list.map((c) => `
+      <button class="card" data-id="${esc(c.id)}">
+        <div class="ph">${c.thumbs[0] ? img(c.thumbs[0], null, title(c)) : ""}<span class="badge">${esc(c.year)}</span></div>
+        <div class="body">
+          <h3>${esc(title(c))}</h3>
+          <div class="sub">${kmf(c.mileage_km)}${c.color ? " · " + esc(c.color) : ""}</div>
+          <div class="price">${yen(c.price_jpy)}</div>
+        </div>
+      </button>`).join("") : `<div class="empty">No cars match right now.</div>`;
+  }
+
+  function openCar(id) {
+    const c = cars.find((x) => x.id === id);
+    if (!c) return closeCar();
+    let i = 0;
+    const rows = [
+      ["Year", c.year], ["Mileage", kmf(c.mileage_km)], ["Exterior colour", c.color],
+      ["Body", c.body], ["Engine", c.engine_cc ? (c.engine_cc / 1000).toFixed(1) + " L" : ""],
+      ["Fuel", c.fuel], ["Transmission", c.transmission], ["Drive", c.drive], ["Steering", c.steering],
+      ["Accident history", c.accident_history], ["Import", c.import],
+      ["Japanese inspection valid until", c.inspection_until], ["Warranty until", c.warranty_until],
+      ["Location", c.location ? c.location + ", Japan" : ""],
+    ].filter(([, v]) => v !== "" && v != null && v !== "-" && v !== "−");
+    $("dbody").innerHTML = `
+      <div>
+        <div class="stage" id="stage"></div>
+        <div class="thumbs" id="thumbs">${c.thumbs.map((t, k) => img(t, null, "", `data-k="${k}"`)).join("")}</div>
+      </div>
+      <div class="info">
+        <h2>${esc(title(c))}</h2>
+        <div class="sub">${esc(c.year)} · ${kmf(c.mileage_km)}</div>
+        <div class="price">${yen(c.price_jpy)}</div>
+        <div class="price-note">Vehicle price in Japan</div>
+        ${admin && c.source_url ? `<a class="src" href="${esc(c.source_url)}" target="_blank" rel="noopener noreferrer">Открыть на Goo-net ↗</a>` : ""}
+        ${c.features.length ? `<div class="feat">${c.features.map((f) => `<span>${esc(f)}</span>`).join("")}</div>` : ""}
+        <table>${rows.map(([k, v]) => `<tr><td>${esc(k)}</td><td>${esc(v)}</td></tr>`).join("")}</table>
+      </div>`;
+    const show = (k) => {
+      if (!c.photos.length) return;
+      i = (k + c.photos.length) % c.photos.length;
+      $("stage").innerHTML = img(c.photos[i], c.thumbs[i], title(c)) +
+        (c.photos.length > 1 ? `<button class="nav prev" aria-label="Previous">‹</button><button class="nav next" aria-label="Next">›</button>` : "") +
+        `<span class="count">${i + 1} / ${c.photos.length}</span>`;
+      $("stage").querySelector(".prev")?.addEventListener("click", () => show(i - 1));
+      $("stage").querySelector(".next")?.addEventListener("click", () => show(i + 1));
+      document.querySelectorAll("#thumbs img").forEach((t) => t.classList.toggle("on", +t.dataset.k === i));
+      document.querySelector(`#thumbs img[data-k="${i}"]`)?.scrollIntoView({ block: "nearest", inline: "nearest" });
+    };
+    $("thumbs").addEventListener("click", (e) => e.target.dataset.k && show(+e.target.dataset.k));
+    show(0);
+    $("detail").onkeydown = null;
+    document.onkeydown = (e) => {
+      if (!$("detail").classList.contains("open")) return;
+      if (e.key === "ArrowLeft") show(i - 1);
+      if (e.key === "ArrowRight") show(i + 1);
+      if (e.key === "Escape") location.hash = "";
+    };
+    $("detail").classList.add("open");
+    $("detail").setAttribute("aria-hidden", "false");
+    $("detail").scrollTop = 0;
+    document.body.style.overflow = "hidden";
+  }
+
+  function closeCar() {
+    $("detail").classList.remove("open");
+    $("detail").setAttribute("aria-hidden", "true");
+    document.body.style.overflow = "";
+  }
+
+  function route() {
+    const m = location.hash.match(/^#car-(.+)$/);
+    m ? openCar(m[1]) : closeCar();
+  }
+
+  $("chips").addEventListener("click", (e) => {
+    const b = e.target.closest(".chip"); if (!b) return;
+    model = b.dataset.m; renderChips(); renderGrid();
+  });
+  $("sort").addEventListener("change", renderGrid);
+  $("grid").addEventListener("click", (e) => {
+    const b = e.target.closest(".card"); if (b) location.hash = "car-" + b.dataset.id;
+  });
+  $("back").addEventListener("click", () => (location.hash = ""));
+  window.addEventListener("hashchange", route);
+
+  renderChips(); renderGrid(); route();
+})();
+</script>
+</body>
+</html>
