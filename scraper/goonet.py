@@ -2,7 +2,7 @@
 
 Usage:  python3 scraper/goonet.py
 Writes: data/cars_full.json   (internal: includes source URL and dealer)
-        site/data.js          (public: what the catalog shows)
+        site/data.js          (published, encrypted with the passwords from secrets.env)
 """
 import html
 import json
@@ -16,6 +16,7 @@ from datetime import datetime, timezone
 
 sys.path.insert(0, os.path.dirname(__file__))
 import i18n  # noqa: E402
+import seal  # noqa: E402
 
 BASE = "https://www.goo-net.com"
 LIST_URL = BASE + "/usedcar/brand-FERRARI/list/{page}"
@@ -154,7 +155,6 @@ def to_public(card, d):
     thumbs = ([card["cover"]] if card.get("cover") else []) + d["photos"]
     return {
         "id": card["id"],
-        "source_url": card["url"],
         "make": "Ferrari",
         "model": model,
         "grade": grade,
@@ -183,6 +183,7 @@ def to_public(card, d):
 def main():
     os.makedirs(CACHE_DIR, exist_ok=True)
     os.makedirs(os.path.dirname(SITE_JS), exist_ok=True)
+    catalog_pw, admin_pw = seal.load_passwords()   # fail early, before scraping
 
     all_cards = []
     for n in range(1, MAX_PAGES + 1):
@@ -219,9 +220,13 @@ def main():
     updated = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     with open(FULL_JSON, "w", encoding="utf-8") as f:
         json.dump({"updated": updated, "cars": full}, f, ensure_ascii=False, indent=1)
+    # Clients get the catalog; source links (dealer pages) are only in the admin blob.
+    sources = {c["id"]: c["url"] for c in full}
     with open(SITE_JS, "w", encoding="utf-8") as f:
-        f.write("window.CATALOG = ")
-        json.dump({"updated": updated, "cars": public}, f, ensure_ascii=False)
+        f.write("window.CATALOG_ENC = ")
+        json.dump(seal.encrypt({"updated": updated, "cars": public}, catalog_pw), f)
+        f.write(";\nwindow.ADMIN_ENC = ")
+        json.dump(seal.encrypt({"sources": sources}, admin_pw), f)
         f.write(";\n")
     print(f"Saved {len(public)} cars -> {SITE_JS}")
 

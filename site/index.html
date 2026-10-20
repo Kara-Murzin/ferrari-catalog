@@ -87,9 +87,36 @@
   .feat { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 20px; }
   .feat span { background: var(--accent-soft); color: #ffb3b3; border-radius: 999px; padding: 4px 10px; font-size: 12px; }
   footer { color: var(--muted); font-size: 12px; border-top: 1px solid var(--line); padding: 18px 0 30px; }
+  footer .wrap { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .linkbtn { background: none; border: 0; padding: 0; color: var(--muted); font: inherit; text-decoration: underline; cursor: pointer; }
+
+  /* Password screen */
+  body.locked > header, body.locked > main, body.locked > footer { display: none; }
+  .lock { display: none; min-height: 100vh; align-items: center; justify-content: center; padding: 24px 16px; }
+  body.locked .lock { display: flex; }
+  .lock form { width: 100%; max-width: 360px; text-align: center; }
+  .lock h1 { font-size: 34px; margin-bottom: 8px; }
+  .lock p { color: var(--muted); margin: 0 0 22px; font-size: 14px; }
+  .lock input { width: 100%; background: var(--surface); border: 1px solid var(--line); color: var(--text); border-radius: 10px;
+    padding: 12px 14px; font: inherit; font-size: 16px; outline: none; }
+  .lock input:focus { border-color: var(--accent); }
+  .lock button[type=submit] { width: 100%; margin-top: 10px; background: var(--accent); color: #fff; border: 0; border-radius: 10px;
+    padding: 12px; font: inherit; font-weight: 600; cursor: pointer; }
+  .lock button[disabled] { opacity: .6; cursor: wait; }
+  .lock .err { color: #ff8080; font-size: 13px; min-height: 20px; margin-top: 10px; }
 </style>
 </head>
-<body>
+<body class="locked">
+<section class="lock" id="lock">
+  <form id="lockForm" autocomplete="on">
+    <h1><span style="color:var(--accent)">Ferrari</span> in Japan</h1>
+    <p id="lockLabel">Private catalog. Enter the password to continue.</p>
+    <input id="lockInput" type="password" name="password" autocomplete="current-password" placeholder="Password" required>
+    <button type="submit" id="lockBtn">Open catalog</button>
+    <div class="err" id="lockErr" role="alert"></div>
+  </form>
+</section>
+
 <header>
   <div class="wrap">
     <h1><span>Ferrari</span> in Japan</h1>
@@ -110,7 +137,7 @@
   <div class="grid" id="grid"></div>
 </main>
 
-<footer><div class="wrap">Prices are in Japanese yen as listed in Japan. Availability changes daily.</div></footer>
+<footer><div class="wrap"><span>Prices are in Japanese yen as listed in Japan. Availability changes daily.</span><button class="linkbtn" id="logout">Log out</button></div></footer>
 
 <section class="detail" id="detail" aria-hidden="true">
   <div class="top"><div class="wrap"><button class="back" id="back">← All cars</button></div></div>
@@ -119,8 +146,78 @@
 
 <script src="data.js"></script>
 <script>
-(() => {
-  const data = window.CATALOG || { cars: [], updated: null };
+// ---- Password gate: data.js holds AES-GCM blobs; keys come from PBKDF2-SHA256 (see scraper/seal.py).
+const store = {
+  get: (k) => { try { return localStorage.getItem(k); } catch (e) { return null; } },
+  set: (k, v) => { try { localStorage.setItem(k, v); } catch (e) {} },
+  del: (k) => { try { localStorage.removeItem(k); } catch (e) {} },
+};
+const unb64 = (s) => Uint8Array.from(atob(s), (c) => c.charCodeAt(0));
+
+async function decrypt(blob, password) {
+  const base = await crypto.subtle.importKey("raw", new TextEncoder().encode(password), "PBKDF2", false, ["deriveKey"]);
+  const key = await crypto.subtle.deriveKey(
+    { name: "PBKDF2", salt: unb64(blob.salt), iterations: blob.iter, hash: "SHA-256" },
+    base, { name: "AES-GCM", length: 256 }, false, ["decrypt"]);
+  const plain = await crypto.subtle.decrypt({ name: "AES-GCM", iv: unb64(blob.iv) }, key, unb64(blob.ct));
+  return JSON.parse(new TextDecoder().decode(plain));
+}
+
+function askPassword(blob, label, button) {
+  const form = document.getElementById("lockForm"), input = document.getElementById("lockInput");
+  const btn = document.getElementById("lockBtn"), err = document.getElementById("lockErr");
+  document.getElementById("lockLabel").textContent = label;
+  btn.textContent = button;
+  input.value = ""; err.textContent = "";
+  document.body.classList.add("locked");
+  input.focus();
+  return new Promise((resolve) => {
+    form.onsubmit = async (e) => {
+      e.preventDefault();
+      btn.disabled = true; err.textContent = "";
+      try {
+        const data = await decrypt(blob, input.value);
+        resolve([data, input.value]);
+      } catch (x) {
+        err.textContent = "Wrong password.";
+        input.select();
+      } finally { btn.disabled = false; }
+    };
+  });
+}
+
+// Uses the password remembered in this browser if it still works, otherwise asks for it.
+async function unlock(storeKey, blob, label, button) {
+  const saved = store.get(storeKey);
+  if (saved) {
+    try { return await decrypt(blob, saved); } catch (e) { store.del(storeKey); }
+  }
+  const [data, pw] = await askPassword(blob, label, button);
+  store.set(storeKey, pw);
+  return data;
+}
+
+(async () => {
+  if (!window.CATALOG_ENC) {
+    document.getElementById("lockLabel").textContent = "Catalog is temporarily unavailable.";
+    document.getElementById("lockForm").querySelectorAll("input,button").forEach((el) => (el.hidden = true));
+    return;
+  }
+  const data = await unlock("catalog_pw", window.CATALOG_ENC, "Private catalog. Enter the password to continue.", "Open catalog");
+
+  // Admin mode (links to the source listing): open once with ?admin, turn off with ?admin=0.
+  const q = new URLSearchParams(location.search);
+  if (q.get("admin") === "0") store.del("admin_pw");
+  let sources = {};
+  if (window.ADMIN_ENC && ((q.has("admin") && q.get("admin") !== "0") || store.get("admin_pw"))) {
+    sources = (await unlock("admin_pw", window.ADMIN_ENC, "Admin password", "Enable admin mode")).sources;
+  }
+  if (q.has("admin")) history.replaceState(null, "", location.pathname + location.hash);
+  document.body.classList.remove("locked");
+  startCatalog(data, sources);
+})();
+
+function startCatalog(data, sources) {
   const cars = data.cars;
   const $ = (id) => document.getElementById(id);
   const yen = (n) => n == null ? "Price on request" : "¥" + n.toLocaleString("en-US");
@@ -129,14 +226,6 @@
   const title = (c) => `${c.make} ${c.model}${c.grade ? " " + c.grade : ""}`;
   const img = (src, fallback, alt, cls = "") =>
     `<img src="${esc(src)}" ${fallback ? `onerror="this.onerror=null;this.src='${esc(fallback)}'"` : ""} alt="${esc(alt)}" loading="lazy" referrerpolicy="no-referrer" ${cls}>`;
-
-  // Admin mode (source links): open once with ?admin, turn off with ?admin=0. Remembered in this browser.
-  const q = new URLSearchParams(location.search);
-  let admin = false;
-  try {
-    if (q.has("admin")) localStorage.setItem("admin", q.get("admin") === "0" ? "" : "1");
-    admin = !!localStorage.getItem("admin");
-  } catch (e) { admin = q.has("admin") && q.get("admin") !== "0"; }
 
   let model = "All";
   const updated = data.updated ? new Date(data.updated).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "";
@@ -191,7 +280,7 @@
         <div class="sub">${esc(c.year)} · ${kmf(c.mileage_km)}</div>
         <div class="price">${yen(c.price_jpy)}</div>
         <div class="price-note">Vehicle price in Japan</div>
-        ${admin && c.source_url ? `<a class="src" href="${esc(c.source_url)}" target="_blank" rel="noopener noreferrer">Открыть на Goo-net ↗</a>` : ""}
+        ${sources[c.id] ? `<a class="src" href="${esc(sources[c.id])}" target="_blank" rel="noopener noreferrer">Открыть на Goo-net ↗</a>` : ""}
         ${c.features.length ? `<div class="feat">${c.features.map((f) => `<span>${esc(f)}</span>`).join("")}</div>` : ""}
         <table>${rows.map(([k, v]) => `<tr><td>${esc(k)}</td><td>${esc(v)}</td></tr>`).join("")}</table>
       </div>`;
@@ -243,8 +332,13 @@
   $("back").addEventListener("click", () => (location.hash = ""));
   window.addEventListener("hashchange", route);
 
+  $("logout").addEventListener("click", () => {
+    store.del("catalog_pw"); store.del("admin_pw");
+    location.hash = ""; location.reload();
+  });
+
   renderChips(); renderGrid(); route();
-})();
+}
 </script>
 </body>
 </html>

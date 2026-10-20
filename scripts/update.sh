@@ -2,7 +2,7 @@
 # Scrape Goo-net, then push site/data.js to GitHub (Pages redeploys automatically).
 set -euo pipefail
 cd "$(dirname "$0")/.."
-export PATH="/usr/local/bin:/opt/homebrew/bin:/usr/bin:/bin:$PATH"
+export PATH="/opt/miniconda3/bin:/usr/local/bin:/opt/homebrew/bin:/usr/bin:/bin:$PATH"
 
 echo "== $(date '+%Y-%m-%d %H:%M') =="
 python3 scraper/goonet.py
