@@ -1,5 +1,4 @@
 data/
-site/data.js
 *.log
 .claude/
 __pycache__/

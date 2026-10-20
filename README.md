@@ -18,10 +18,16 @@ Then open `site/index.html` in a browser.
 Filters live at the top of `scraper/goonet.py` (`MIN_YEAR`, `MAX_KM`).
 Model names and feature translations live in `scraper/i18n.py`.
 
-## Daily update (cron)
+## Daily update
+
+Goo-net does not answer GitHub's servers, so the scraper runs on this Mac:
+`scripts/update.sh` scrapes and pushes `site/data.js`; GitHub Actions then
+publishes `site/` to GitHub Pages.
+
+Schedule it with `crontab -e` (daily at 09:00, the Mac must be awake):
 
 ```
-0 4 * * * cd /path/to/project && python3 scraper/goonet.py >> scraper.log 2>&1
+0 9 * * * /Users/zhanserik/ferrari-catalog/scripts/update.sh >> /Users/zhanserik/ferrari-catalog/update.log 2>&1
 ```
 
 Each run rebuilds the list from scratch, so sold cars disappear automatically.

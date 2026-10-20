@@ -1,9 +1,12 @@
-name: Update catalog
+name: Deploy catalog
 
+# The scraper runs on a machine in Japan-friendly network (Goo-net does not answer
+# GitHub's servers). It commits site/data.js; this workflow only publishes site/.
 on:
-  schedule:
-    - cron: "0 19 * * *"   # daily at 04:00 Japan time
-  workflow_dispatch:         # "Run workflow" button for manual runs
+  push:
+    branches: [main]
+    paths: ["site/**"]
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -12,40 +15,19 @@ permissions:
 
 concurrency:
   group: pages
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    timeout-minutes: 30
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-
-      # Detail pages already seen are cached between runs, so only new cars are fetched.
-      - uses: actions/cache@v4
-        with:
-          path: data/cache
-          key: goonet-cache-${{ github.run_id }}
-          restore-keys: goonet-cache-
-
-      # Exits with an error if nothing was parsed -> deploy is skipped and the old site stays up.
-      - run: python3 scraper/goonet.py
-
-      - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: site
-
   deploy:
-    needs: build
     runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
+      - uses: actions/checkout@v4
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
       - id: deployment
         uses: actions/deploy-pages@v4
