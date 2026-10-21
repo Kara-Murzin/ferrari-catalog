@@ -6,6 +6,7 @@
 <meta name="theme-color" content="#0e0e10">
 <title>Lion Motors — Premium cars from Japan</title>
 <meta name="description" content="Lion Motors sources, inspects and exports premium and luxury cars from Japan to buyers worldwide.">
+<link rel="icon" href="assets/lion.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://images.unsplash.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -45,8 +46,9 @@
   .nav .wrap { display: flex; align-items: center; justify-content: space-between; height: 72px; gap: 20px; }
   .nav.solid { background: rgba(255,255,255,.92); -webkit-backdrop-filter: saturate(1.4) blur(14px); backdrop-filter: saturate(1.4) blur(14px);
     border-color: var(--line); color: var(--ink); }
-  .logo { font: 800 20px/1 Inter, sans-serif; letter-spacing: .16em; text-decoration: none; white-space: nowrap; }
-  .logo span { color: var(--accent); }
+  .logo { display: inline-flex; align-items: center; gap: 12px; font: 800 20px/1 Inter, sans-serif; letter-spacing: .16em; text-decoration: none; white-space: nowrap; }
+  .logo .mark { height: 38px; width: auto; flex: none; filter: drop-shadow(0 1px 1px rgba(0,0,0,.15)); }
+  .logo > span > span { color: var(--accent); }
   .links { display: flex; align-items: center; gap: 30px; font-size: 14px; font-weight: 500; }
   .links a { text-decoration: none; opacity: .85; }
   .links a:hover { opacity: 1; }
@@ -156,6 +158,7 @@
   footer .wrap { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap;
     padding-top: 28px; padding-bottom: calc(28px + env(safe-area-inset-bottom)); }
   footer .logo { color: #fff; font-size: 16px; }
+  footer .logo .mark { height: 30px; }
   footer a { color: var(--on-dark-muted); }
 
   /* ---------- Reveal on scroll ---------- */
@@ -174,6 +177,8 @@
   /* ---------- Phones ---------- */
   @media (max-width: 760px) {
     .nav .wrap { height: 64px; }
+    .logo { font-size: 17px; gap: 10px; }
+    .logo .mark { height: 32px; }
     .burger { display: block; margin-right: -10px; }
     .links { position: fixed; inset: calc(64px + env(safe-area-inset-top)) 0 auto; flex-direction: column; align-items: stretch; gap: 0;
       background: #fff; color: var(--ink); border-bottom: 1px solid var(--line); padding: 8px 20px 20px;
@@ -220,7 +225,7 @@
 
 <header class="nav" id="nav">
   <div class="wrap">
-    <a href="#top" class="logo"><span>LION</span> MOTORS</a>
+    <a href="#top" class="logo"><img class="mark" src="assets/lion.svg" alt=""><span><span>LION</span> MOTORS</span></a>
     <nav class="links" id="links">
       <a href="#services">Services</a>
       <a href="#process">How it works</a>
@@ -408,7 +413,7 @@
 
 <footer>
   <div class="wrap">
-    <a href="#top" class="logo"><span>LION</span> MOTORS</a>
+    <a href="#top" class="logo"><img class="mark" src="assets/lion.svg" alt=""><span><span>LION</span> MOTORS</span></a>
     <span>© <span id="year"></span> Lion Motors. Photos: <a href="https://unsplash.com" target="_blank" rel="noopener">Unsplash</a></span>
   </div>
 </footer>

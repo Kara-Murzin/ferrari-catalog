@@ -7,6 +7,7 @@
 <meta name="robots" content="noindex, nofollow">
 <meta name="referrer" content="no-referrer">
 <title>Lion Motors</title>
+<link rel="icon" href="../assets/lion.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet">
 <style>
@@ -28,6 +29,10 @@
   h1 { font: 600 30px/1.1 "Playfair Display", serif; margin: 0; letter-spacing: .3px; }
   .logo { font: 800 26px/1 Inter, system-ui, sans-serif; letter-spacing: .14em; margin: 0; color: #111114; }
   .logo span { color: var(--accent); }
+  .logo a { display: inline-flex; align-items: center; gap: 12px; color: inherit; }
+  .logo a span { color: var(--accent); }
+  .logo .mark { height: 36px; width: auto; flex: none; }
+  .lock .mark { display: block; height: 120px; width: auto; margin: 0 auto 22px; }
   .meta { color: var(--muted); font-size: 13px; }
 
   /* Sticky filter bar */
@@ -107,6 +112,8 @@
   @media (max-width: 640px) {
     header .wrap { padding-top: 18px; padding-bottom: 14px; align-items: center; }
     .logo { font-size: 20px; letter-spacing: .16em; }
+    .logo .mark { height: 30px; }
+    .logo a { gap: 10px; }
     .meta .upd { display: none; }
     .bar .wrap { padding-top: 10px; padding-bottom: 6px; }
     .chips { flex-wrap: nowrap; overflow-x: auto; margin: 0 -16px; padding: 2px 16px 4px; scrollbar-width: none; scroll-snap-type: x proximity; scroll-padding-inline: 16px; }
@@ -172,6 +179,7 @@
 <body class="locked">
 <section class="lock" id="lock">
   <form id="lockForm" autocomplete="on">
+    <img class="mark" src="../assets/lion.svg" alt="">
     <h1 class="logo"><span>LION</span> MOTORS</h1>
     <p id="lockLabel">Private catalog. Enter the password to continue.</p>
     <input id="lockInput" type="password" name="password" autocomplete="current-password" placeholder="Password" required>
@@ -182,7 +190,7 @@
 
 <header>
   <div class="wrap">
-    <h1 class="logo"><a href="../" style="text-decoration:none"><span>LION</span> MOTORS</a></h1>
+    <h1 class="logo"><a href="../" style="text-decoration:none"><img class="mark" src="../assets/lion.svg" alt=""><b style="font-weight:inherit"><span>LION</span> MOTORS</b></a></h1>
     <div class="meta" id="meta"></div>
   </div>
 </header>
