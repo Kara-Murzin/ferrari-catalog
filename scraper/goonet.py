@@ -2,7 +2,7 @@
 
 Usage:  python3 scraper/goonet.py
 Writes: data/cars_full.json   (internal: includes source URL and dealer)
-        site/data.js          (published, encrypted with the passwords from secrets.env)
+        site/catalog/data.js  (published, encrypted with the passwords from secrets.env)
 """
 import html
 import json
@@ -29,7 +29,7 @@ UA = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML,
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CACHE_DIR = os.path.join(ROOT, "data", "cache")
 FULL_JSON = os.path.join(ROOT, "data", "cars_full.json")
-SITE_JS = os.path.join(ROOT, "site", "data.js")
+SITE_JS = os.path.join(ROOT, "site", "catalog", "data.js")
 
 
 def fetch(url):

@@ -1,0 +1,451 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#ffffff">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<title>Lion Motors</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #ffffff; --surface: #ffffff; --surface-2: #f3f3f5; --line: #e6e6ea;
+    --text: #111114; --muted: #6b6b74; --accent: #d40000; --accent-soft: rgba(212,0,0,.07);
+    --radius: 14px;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--text);
+    font: 15px/1.5 Inter, system-ui, -apple-system, sans-serif; -webkit-font-smoothing: antialiased;
+    -webkit-tap-highlight-color: transparent; -webkit-text-size-adjust: 100%; }
+  button, select { -webkit-tap-highlight-color: transparent; }
+  a { color: inherit; }
+  .wrap { max-width: 1240px; margin: 0 auto; padding: 0 max(16px, env(safe-area-inset-left)) 0 max(16px, env(safe-area-inset-right)); }
+
+  header { border-bottom: 1px solid var(--line); }
+  header .wrap { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding-top: 28px; padding-bottom: 22px; flex-wrap: wrap; }
+  h1 { font: 600 30px/1.1 "Playfair Display", serif; margin: 0; letter-spacing: .3px; }
+  .logo { font: 800 26px/1 Inter, system-ui, sans-serif; letter-spacing: .14em; margin: 0; color: #111114; }
+  .logo span { color: var(--accent); }
+  .meta { color: var(--muted); font-size: 13px; }
+
+  /* Sticky filter bar */
+  .bar { position: sticky; top: 0; z-index: 5; background: rgba(255,255,255,.9);
+    -webkit-backdrop-filter: saturate(1.4) blur(14px); backdrop-filter: saturate(1.4) blur(14px); border-bottom: 1px solid var(--line); }
+  .bar .wrap { padding-top: 14px; padding-bottom: 10px; }
+  .chips { display: flex; gap: 8px; flex-wrap: wrap; min-width: 0; }
+  .subbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 10px; color: var(--muted); font-size: 13px; }
+  .sortwrap { display: inline-flex; align-items: center; gap: 6px; }
+  .sortwrap select { border: 0; background: transparent; padding: 6px 2px; font-weight: 600; color: var(--text); cursor: pointer; }
+  .chip { border: 1px solid var(--line); background: var(--surface); color: var(--text); border-radius: 999px;
+    padding: 7px 14px; font: inherit; font-size: 13px; cursor: pointer; white-space: nowrap; flex: none; }
+  .chip:hover { border-color: #bdbdc4; }
+  .chip.on { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .chip small { color: var(--muted); margin-left: 4px; }
+  .chip.on small { color: rgba(255,255,255,.75); }
+  select { background: var(--surface); color: var(--text); border: 1px solid var(--line); border-radius: 10px;
+    padding: 8px 12px; font: inherit; font-size: 13px; }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 18px; padding: 18px 0 60px; }
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden;
+    cursor: pointer; transition: transform .15s ease, border-color .15s ease; text-align: left; padding: 0; color: inherit; font: inherit; }
+  .card:hover { transform: translateY(-3px); border-color: #d4d4da; box-shadow: 0 10px 28px rgba(0,0,0,.08); }
+  .card:active { transform: scale(.985); }
+  .ph { aspect-ratio: 4/3; background: var(--surface-2); position: relative; overflow: hidden; }
+  .ph img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .badge { position: absolute; top: 10px; left: 10px; background: rgba(0,0,0,.65); backdrop-filter: blur(4px); color: #fff;
+    padding: 3px 9px; border-radius: 999px; font-size: 12px; }
+  .card .body { padding: 14px 16px 16px; }
+  .card h3 { margin: 0; font-size: 17px; font-weight: 600; }
+  .card .sub { color: var(--muted); font-size: 13px; margin-top: 2px; }
+  .card .price { margin-top: 12px; font-size: 20px; font-weight: 600; }
+  .card .price small { color: var(--muted); font-size: 12px; font-weight: 400; margin-left: 4px; }
+  .empty { color: var(--muted); padding: 60px 0; text-align: center; grid-column: 1/-1; }
+
+  /* Detail */
+  .detail { position: fixed; inset: 0; background: var(--bg); overflow-y: auto; z-index: 10; display: none; }
+  .detail.open { display: block; }
+  .detail .top { position: sticky; top: 0; background: rgba(255,255,255,.92); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); z-index: 2; }
+  .detail .top .wrap { display: flex; align-items: center; gap: 12px; padding-top: 12px; padding-bottom: 12px; }
+  .back { background: none; border: 1px solid var(--line); color: var(--text); border-radius: 10px; padding: 7px 12px; font: inherit; font-size: 13px; cursor: pointer; flex: none; }
+  .dttl { font-weight: 600; font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; opacity: 0; transition: opacity .2s; }
+  .detail.scrolled .dttl { opacity: 1; }
+  .dgrid { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: 28px; padding: 24px 0 60px; }
+  @media (max-width: 900px) { .dgrid { grid-template-columns: minmax(0, 1fr); } }
+  .stage { position: relative; aspect-ratio: 4/3; background: var(--surface-2); border-radius: var(--radius); overflow: hidden; }
+  .track { position: absolute; inset: 0; display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; overscroll-behavior-x: contain; }
+  .track::-webkit-scrollbar { display: none; }
+  .slide { flex: 0 0 100%; height: 100%; scroll-snap-align: center; scroll-snap-stop: always; }
+  .slide img { width: 100%; height: 100%; object-fit: contain; display: block; background: var(--surface-2); }
+  .nav { position: absolute; top: 50%; transform: translateY(-50%); width: 42px; height: 42px; border-radius: 50%;
+    border: 0; background: rgba(0,0,0,.55); color: #fff; font-size: 20px; cursor: pointer; }
+  .nav.prev { left: 10px; } .nav.next { right: 10px; }
+  .count { position: absolute; bottom: 10px; right: 12px; background: rgba(0,0,0,.6); color: #fff; padding: 2px 9px; border-radius: 999px; font-size: 12px; }
+  .thumbs { display: flex; gap: 8px; overflow-x: auto; padding: 10px 0 4px; scrollbar-width: thin; scroll-behavior: smooth; }
+  .thumbs img { width: 92px; height: 69px; object-fit: cover; border-radius: 8px; cursor: pointer; opacity: .55; border: 2px solid transparent; flex: none; }
+  .thumbs img.on { opacity: 1; border-color: var(--accent); }
+  .info h2 { font: 600 30px/1.15 "Playfair Display", serif; margin: 0; }
+  .info .sub { color: var(--muted); margin-top: 6px; }
+  .info .price { font-size: 30px; font-weight: 600; margin: 18px 0 2px; }
+  .info .price-note { color: var(--muted); font-size: 13px; }
+  table { width: 100%; border-collapse: collapse; margin-top: 22px; font-size: 14px; }
+  td { padding: 9px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+  td:first-child { color: var(--muted); width: 45%; }
+  .src { display: inline-block; margin-top: 14px; padding: 8px 14px; border: 1px solid var(--accent); border-radius: 10px;
+    color: var(--accent); text-decoration: none; font-size: 13px; font-weight: 500; }
+  .src:hover { background: var(--accent-soft); }
+  .feat { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 20px; }
+  .feat span { background: var(--accent-soft); color: #b00000; border-radius: 999px; padding: 4px 10px; font-size: 12px; }
+  footer { color: var(--muted); font-size: 12px; border-top: 1px solid var(--line); padding: 18px 0 30px; }
+  footer .wrap { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .linkbtn { background: none; border: 0; padding: 0; color: var(--muted); font: inherit; text-decoration: underline; cursor: pointer; }
+
+  .pricebar { display: none; }
+
+  /* ---------- Phones ---------- */
+  @media (max-width: 640px) {
+    header .wrap { padding-top: 18px; padding-bottom: 14px; align-items: center; }
+    .logo { font-size: 20px; letter-spacing: .16em; }
+    .meta .upd { display: none; }
+    .bar .wrap { padding-top: 10px; padding-bottom: 6px; }
+    .chips { flex-wrap: nowrap; overflow-x: auto; margin: 0 -16px; padding: 2px 16px 4px; scrollbar-width: none; scroll-snap-type: x proximity; scroll-padding-inline: 16px; }
+    .chips::-webkit-scrollbar { display: none; }
+    .chip { padding: 9px 15px; font-size: 14px; scroll-snap-align: start; }
+    .subbar { margin-top: 6px; }
+
+    .grid { gap: 14px; padding: 14px 0 32px; }
+    .card { border-radius: 18px; box-shadow: 0 1px 2px rgba(0,0,0,.04); }
+    .card:hover { transform: none; box-shadow: 0 1px 2px rgba(0,0,0,.04); }
+    .ph { aspect-ratio: 16/10; }
+    .badge { top: 12px; left: 12px; font-size: 12px; font-weight: 600; }
+    .card .body { padding: 12px 16px 16px; display: grid; grid-template-columns: 1fr auto; column-gap: 12px; align-items: end; }
+    .card h3 { font-size: 16px; grid-column: 1 / -1; }
+    .card .sub { margin-top: 2px; }
+    .card .price { margin-top: 0; font-size: 18px; font-weight: 700; white-space: nowrap; }
+
+    /* Car page: full-bleed swipe gallery, sticky price bar */
+    .detail .top .wrap { padding-top: 10px; padding-bottom: 10px; }
+    .dgrid.wrap { padding: 0; gap: 0; }
+    .dgrid { padding: 0 0 24px; }
+    .stage { border-radius: 0; }
+    .nav { display: none; }
+    .count { bottom: 12px; right: 12px; font-size: 12px; font-weight: 600; }
+    .thumbs { padding: 10px 16px 2px; gap: 6px; }
+    .thumbs img { width: 64px; height: 48px; border-radius: 6px; }
+    .info { padding: 18px 16px 0; }
+    .info h2 { font-size: 26px; }
+    .info .price { font-size: 26px; margin-top: 14px; }
+    .feat { margin-top: 16px; }
+    .feat span { font-size: 12px; padding: 5px 10px; }
+    table { margin-top: 18px; font-size: 14px; }
+    td { padding: 11px 0; }
+    td:first-child { width: 48%; }
+    .src { display: none; }
+    .pricebar { display: flex; position: sticky; bottom: 0; z-index: 3; align-items: center; justify-content: space-between; gap: 12px;
+      margin-top: 24px; padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+      background: rgba(255,255,255,.94); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); border-top: 1px solid var(--line); }
+    .pricebar b { display: block; font-size: 18px; line-height: 1.2; }
+    .pricebar small { color: var(--muted); font-size: 12px; }
+    .pricebar a { flex: none; padding: 10px 14px; border-radius: 12px; background: var(--accent); color: #fff; text-decoration: none; font-size: 14px; font-weight: 600; }
+
+    footer { padding-bottom: calc(24px + env(safe-area-inset-bottom)); }
+    footer .wrap { flex-direction: column; align-items: center; text-align: center; gap: 10px; }
+  }
+
+  /* Password screen */
+  body.locked > header, body.locked > .bar, body.locked > main, body.locked > footer { display: none; }
+  .lock { display: none; min-height: 100vh; align-items: center; justify-content: center; padding: 24px 16px; }
+  body.locked .lock { display: flex; }
+  .lock form { width: 100%; max-width: 360px; text-align: center; }
+  .lock .logo { font-size: 32px; margin-bottom: 14px; }
+  .lock p { color: var(--muted); margin: 0 0 22px; font-size: 14px; }
+  .lock input { width: 100%; background: var(--surface); border: 1px solid var(--line); color: var(--text); border-radius: 10px;
+    padding: 12px 14px; font: inherit; font-size: 16px; outline: none; }
+  .lock input:focus { border-color: var(--accent); }
+  .lock button[type=submit] { width: 100%; margin-top: 10px; background: var(--accent); color: #fff; border: 0; border-radius: 10px;
+    padding: 12px; font: inherit; font-weight: 600; cursor: pointer; }
+  .lock button[disabled] { opacity: .6; cursor: wait; }
+  .lock .err { color: #c00000; font-size: 13px; min-height: 20px; margin-top: 10px; }
+</style>
+</head>
+<body class="locked">
+<section class="lock" id="lock">
+  <form id="lockForm" autocomplete="on">
+    <h1 class="logo"><span>LION</span> MOTORS</h1>
+    <p id="lockLabel">Private catalog. Enter the password to continue.</p>
+    <input id="lockInput" type="password" name="password" autocomplete="current-password" placeholder="Password" required>
+    <button type="submit" id="lockBtn">Open catalog</button>
+    <div class="err" id="lockErr" role="alert"></div>
+  </form>
+</section>
+
+<header>
+  <div class="wrap">
+    <h1 class="logo"><a href="../" style="text-decoration:none"><span>LION</span> MOTORS</a></h1>
+    <div class="meta" id="meta"></div>
+  </div>
+</header>
+
+<div class="bar">
+  <div class="wrap">
+    <div class="chips" id="chips"></div>
+    <div class="subbar">
+      <span id="found"></span>
+      <label class="sortwrap">Sort
+        <select id="sort" aria-label="Sort">
+          <option value="new">Newest first</option>
+          <option value="price-asc">Price: low to high</option>
+          <option value="price-desc">Price: high to low</option>
+          <option value="km">Lowest mileage</option>
+        </select>
+      </label>
+    </div>
+  </div>
+</div>
+
+<main class="wrap">
+  <div class="grid" id="grid"></div>
+</main>
+
+<footer><div class="wrap"><span>Prices are total prices in Japanese yen (incl. tax and fees) as listed in Japan. Availability changes daily.</span><span><button class="linkbtn" id="adminBtn">Admin</button> · <button class="linkbtn" id="logout">Log out</button></span></div></footer>
+
+<section class="detail" id="detail" aria-hidden="true">
+  <div class="top"><div class="wrap"><button class="back" id="back">← All cars</button><span class="dttl" id="dttl"></span></div></div>
+  <div class="wrap dgrid" id="dbody"></div>
+</section>
+
+<script>
+// ---- Password gate: data.js holds AES-GCM blobs; keys come from PBKDF2-SHA256 (see scraper/seal.py).
+// Passwords are remembered only for this tab session, so every new visit asks again.
+const store = {
+  get: (k) => { try { return sessionStorage.getItem(k); } catch (e) { return null; } },
+  set: (k, v) => { try { sessionStorage.setItem(k, v); } catch (e) {} },
+  del: (k) => { try { sessionStorage.removeItem(k); } catch (e) {} },
+};
+const unb64 = (s) => Uint8Array.from(atob(s), (c) => c.charCodeAt(0));
+
+async function decrypt(blob, password) {
+  const base = await crypto.subtle.importKey("raw", new TextEncoder().encode(password), "PBKDF2", false, ["deriveKey"]);
+  const key = await crypto.subtle.deriveKey(
+    { name: "PBKDF2", salt: unb64(blob.salt), iterations: blob.iter, hash: "SHA-256" },
+    base, { name: "AES-GCM", length: 256 }, false, ["decrypt"]);
+  const plain = await crypto.subtle.decrypt({ name: "AES-GCM", iv: unb64(blob.iv) }, key, unb64(blob.ct));
+  return JSON.parse(new TextDecoder().decode(plain));
+}
+
+function askPassword(blob, label, button) {
+  const form = document.getElementById("lockForm"), input = document.getElementById("lockInput");
+  const btn = document.getElementById("lockBtn"), err = document.getElementById("lockErr");
+  document.getElementById("lockLabel").textContent = label;
+  btn.textContent = button;
+  input.value = ""; err.textContent = "";
+  document.body.classList.add("locked");
+  input.focus();
+  return new Promise((resolve) => {
+    form.onsubmit = async (e) => {
+      e.preventDefault();
+      btn.disabled = true; err.textContent = "";
+      try {
+        const data = await decrypt(blob, input.value);
+        resolve([data, input.value]);
+      } catch (x) {
+        err.textContent = "Wrong password.";
+        input.select();
+      } finally { btn.disabled = false; }
+    };
+  });
+}
+
+// Uses the password remembered in this browser if it still works, otherwise asks for it.
+async function unlock(storeKey, blob, label, button) {
+  const saved = store.get(storeKey);
+  if (saved) {
+    try { return await decrypt(blob, saved); } catch (e) { store.del(storeKey); }
+  }
+  const [data, pw] = await askPassword(blob, label, button);
+  store.set(storeKey, pw);
+  return data;
+}
+
+// data.js changes daily (and when passwords change): load it with a cache-busting query.
+(() => {
+  const el = document.createElement("script");
+  el.src = "data.js?v=" + Math.floor(Date.now() / 60000);
+  el.onload = el.onerror = boot;
+  document.head.appendChild(el);
+})();
+
+async function boot() {
+  if (!window.CATALOG_ENC) {
+    document.getElementById("lockLabel").textContent = "Catalog is temporarily unavailable.";
+    document.getElementById("lockForm").querySelectorAll("input,button").forEach((el) => (el.hidden = true));
+    return;
+  }
+  const data = await unlock("catalog_pw", window.CATALOG_ENC, "Private catalog. Enter the password to continue.", "Open catalog");
+
+  // Admin mode (links to the source listing): open once with ?admin, turn off with ?admin=0.
+  const q = new URLSearchParams(location.search);
+  if (q.get("admin") === "0") store.del("admin_pw");
+  let sources = {};
+  if (window.ADMIN_ENC && ((q.has("admin") && q.get("admin") !== "0") || store.get("admin_pw"))) {
+    sources = (await unlock("admin_pw", window.ADMIN_ENC, "Admin password", "Enable admin mode")).sources;
+  }
+  if (q.has("admin")) history.replaceState(null, "", location.pathname + location.hash);
+  document.body.classList.remove("locked");
+  startCatalog(data, sources);
+}
+
+function startCatalog(data, sources) {
+  const cars = data.cars;
+  const $ = (id) => document.getElementById(id);
+  const yen = (n) => n == null ? "Price on request" : "¥" + n.toLocaleString("en-US");
+  const kmf = (n) => n == null ? "—" : n.toLocaleString("en-US") + " km";
+  const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  // Total payment in Japan (支払総額): vehicle price + taxes + registration/dealer fees.
+  const total = (c) => c.price_total_jpy ?? c.price_jpy;
+  const title = (c) => `${c.make} ${c.model}${c.grade ? " " + c.grade : ""}`;
+  const img = (src, fallback, alt, cls = "") =>
+    `<img src="${esc(src)}" ${fallback ? `onerror="this.onerror=null;this.src='${esc(fallback)}'"` : ""} alt="${esc(alt)}" loading="lazy" referrerpolicy="no-referrer" ${cls}>`;
+
+  let model = "All";
+  const updated = data.updated ? new Date(data.updated).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "";
+  $("meta").innerHTML = `Ferrari · 2024+ · under 50,000 km${updated ? `<span class="upd"> · updated ${esc(updated)}</span>` : ""}`;
+
+  function renderChips() {
+    const counts = {};
+    cars.forEach((c) => (counts[c.model] = (counts[c.model] || 0) + 1));
+    const models = Object.keys(counts).sort();
+    $("chips").innerHTML = ["All", ...models].map((m) =>
+      `<button class="chip${m === model ? " on" : ""}" data-m="${esc(m)}">${esc(m)}<small>${m === "All" ? cars.length : counts[m]}</small></button>`).join("");
+  }
+
+  function renderGrid() {
+    const sort = $("sort").value;
+    const list = cars.filter((c) => model === "All" || c.model === model).slice();
+    const P = (c) => total(c) ?? Infinity;
+    if (sort === "price-asc") list.sort((a, b) => P(a) - P(b));
+    if (sort === "price-desc") list.sort((a, b) => (total(b) ?? -1) - (total(a) ?? -1));
+    if (sort === "km") list.sort((a, b) => (a.mileage_km ?? 1e9) - (b.mileage_km ?? 1e9));
+    if (sort === "new") list.sort((a, b) => b.year - a.year || (a.mileage_km ?? 0) - (b.mileage_km ?? 0));
+    $("found").textContent = `${list.length} ${list.length === 1 ? "car" : "cars"}`;
+    $("grid").innerHTML = list.length ? list.map((c) => `
+      <button class="card" data-id="${esc(c.id)}">
+        <div class="ph">${c.thumbs[0] ? img(c.thumbs[0], null, title(c)) : ""}<span class="badge">${esc(c.year)}</span></div>
+        <div class="body">
+          <h3>${esc(title(c))}</h3>
+          <div class="sub">${kmf(c.mileage_km)}${c.color ? " · " + esc(c.color) : ""}</div>
+          <div class="price">${yen(total(c))}</div>
+        </div>
+      </button>`).join("") : `<div class="empty">No cars match right now.</div>`;
+  }
+
+  function openCar(id) {
+    const c = cars.find((x) => x.id === id);
+    if (!c) return closeCar();
+    let i = 0;
+    const rows = [
+      ["Year", c.year], ["Mileage", kmf(c.mileage_km)], ["Exterior colour", c.color],
+      ["Body", c.body], ["Engine", c.engine_cc ? (c.engine_cc / 1000).toFixed(1) + " L" : ""],
+      ["Fuel", c.fuel], ["Transmission", c.transmission], ["Drive", c.drive], ["Steering", c.steering],
+      ["Accident history", c.accident_history], ["Import", c.import],
+      ["Japanese inspection valid until", c.inspection_until], ["Warranty until", c.warranty_until],
+      ["Location", c.location ? c.location + ", Japan" : ""],
+    ].filter(([, v]) => v !== "" && v != null && v !== "-" && v !== "−");
+    const n = c.photos.length;
+    const breakdown = c.price_total_jpy && c.price_jpy && c.price_total_jpy !== c.price_jpy
+      ? ` · vehicle ${yen(c.price_jpy)} + fees ${yen(c.price_total_jpy - c.price_jpy)}` : "";
+    const srcLink = sources[c.id]
+      ? `<a class="src" href="${esc(sources[c.id])}" target="_blank" rel="noopener noreferrer">Открыть на Goo-net ↗</a>` : "";
+    $("dttl").textContent = title(c);
+    $("dbody").innerHTML = `
+      <div>
+        <div class="stage">
+          <div class="track" id="track">${c.photos.map((p, k) => `<div class="slide">${img(p, c.thumbs[k], `${title(c)}, photo ${k + 1}`)}</div>`).join("")}</div>
+          ${n > 1 ? `<button class="nav prev" aria-label="Previous photo">‹</button><button class="nav next" aria-label="Next photo">›</button>` : ""}
+          ${n ? `<span class="count" id="gcount">1 / ${n}</span>` : ""}
+        </div>
+        <div class="thumbs" id="thumbs">${c.thumbs.map((t, k) => img(t, null, "", `data-k="${k}"`)).join("")}</div>
+      </div>
+      <div class="info">
+        <h2>${esc(title(c))}</h2>
+        <div class="sub">${esc(c.year)} · ${kmf(c.mileage_km)}</div>
+        <div class="price">${yen(total(c))}</div>
+        <div class="price-note">Total price in Japan, incl. tax and fees${breakdown}</div>
+        ${srcLink}
+        ${c.features.length ? `<div class="feat">${c.features.map((f) => `<span>${esc(f)}</span>`).join("")}</div>` : ""}
+        <table>${rows.map(([k, v]) => `<tr><td>${esc(k)}</td><td>${esc(v)}</td></tr>`).join("")}</table>
+      </div>
+      <div class="pricebar">
+        <div><b>${yen(total(c))}</b><small>Total price in Japan</small></div>
+        ${sources[c.id] ? `<a href="${esc(sources[c.id])}" target="_blank" rel="noopener noreferrer">Goo-net ↗</a>` : ""}
+      </div>`;
+
+    // Swipeable gallery: the track scrolls with snap; arrows/thumbs/keys scroll it.
+    const track = $("track"), thumbs = $("thumbs");
+    const go = (k) => n && track.scrollTo({ left: ((k + n) % n) * track.clientWidth, behavior: "smooth" });
+    const mark = () => {
+      if ($("gcount")) $("gcount").textContent = `${i + 1} / ${n}`;
+      thumbs.querySelectorAll("img").forEach((t) => t.classList.toggle("on", +t.dataset.k === i));
+      const t = thumbs.querySelector(`img[data-k="${i}"]`);
+      if (t) thumbs.scrollTo({ left: t.offsetLeft - thumbs.clientWidth / 2 + t.clientWidth / 2 });
+    };
+    track.addEventListener("scroll", () => {
+      const k = Math.round(track.scrollLeft / track.clientWidth);
+      if (k !== i && k >= 0 && k < n) { i = k; mark(); }
+    }, { passive: true });
+    $("dbody").querySelector(".prev")?.addEventListener("click", () => go(i - 1));
+    $("dbody").querySelector(".next")?.addEventListener("click", () => go(i + 1));
+    thumbs.addEventListener("click", (e) => e.target.dataset.k && go(+e.target.dataset.k));
+    mark();
+    $("detail").onscroll = () => $("detail").classList.toggle("scrolled", $("detail").scrollTop > 280);
+    document.onkeydown = (e) => {
+      if (!$("detail").classList.contains("open")) return;
+      if (e.key === "ArrowLeft") go(i - 1);
+      if (e.key === "ArrowRight") go(i + 1);
+      if (e.key === "Escape") location.hash = "";
+    };
+    $("detail").classList.add("open");
+    $("detail").setAttribute("aria-hidden", "false");
+    $("detail").scrollTop = 0;
+    $("detail").classList.remove("scrolled");
+    document.body.style.overflow = "hidden";
+  }
+
+  function closeCar() {
+    $("detail").classList.remove("open");
+    $("detail").setAttribute("aria-hidden", "true");
+    document.body.style.overflow = "";
+  }
+
+  function route() {
+    const m = location.hash.match(/^#car-(.+)$/);
+    m ? openCar(m[1]) : closeCar();
+  }
+
+  $("chips").addEventListener("click", (e) => {
+    const b = e.target.closest(".chip"); if (!b) return;
+    model = b.dataset.m; renderChips(); renderGrid();
+  });
+  $("sort").addEventListener("change", renderGrid);
+  $("grid").addEventListener("click", (e) => {
+    const b = e.target.closest(".card"); if (b) location.hash = "car-" + b.dataset.id;
+  });
+  $("back").addEventListener("click", () => (location.hash = ""));
+  window.addEventListener("hashchange", route);
+
+  if (Object.keys(sources).length) $("adminBtn").textContent = "Admin ✓";
+  $("adminBtn").addEventListener("click", () => {
+    if (Object.keys(sources).length) return;
+    location.href = location.pathname + "?admin" + location.hash;
+  });
+  $("logout").addEventListener("click", () => {
+    store.del("catalog_pw"); store.del("admin_pw");
+    location.hash = ""; location.reload();
+  });
+
+  renderChips(); renderGrid(); route();
+}
+</script>
+</body>
+</html>
