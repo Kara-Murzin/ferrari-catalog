@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#ffffff">
 <meta name="robots" content="noindex, nofollow">
 <meta name="referrer" content="no-referrer">
 <title>Lion Motors</title>
@@ -16,9 +17,11 @@
   }
   * { box-sizing: border-box; }
   html, body { margin: 0; background: var(--bg); color: var(--text);
-    font: 15px/1.5 Inter, system-ui, -apple-system, sans-serif; -webkit-font-smoothing: antialiased; }
+    font: 15px/1.5 Inter, system-ui, -apple-system, sans-serif; -webkit-font-smoothing: antialiased;
+    -webkit-tap-highlight-color: transparent; -webkit-text-size-adjust: 100%; }
+  button, select { -webkit-tap-highlight-color: transparent; }
   a { color: inherit; }
-  .wrap { max-width: 1240px; margin: 0 auto; padding: 0 16px; }
+  .wrap { max-width: 1240px; margin: 0 auto; padding: 0 max(16px, env(safe-area-inset-left)) 0 max(16px, env(safe-area-inset-right)); }
 
   header { border-bottom: 1px solid var(--line); }
   header .wrap { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding-top: 28px; padding-bottom: 22px; flex-wrap: wrap; }
@@ -27,15 +30,16 @@
   .logo span { color: var(--accent); }
   .meta { color: var(--muted); font-size: 13px; }
 
-  .toolbar { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; padding: 20px 0 8px; }
-  .chips { display: flex; gap: 8px; flex-wrap: wrap; flex: 1 1 520px; min-width: 0; }
-  @media (max-width: 640px) {
-    .chips { flex-wrap: nowrap; overflow-x: auto; margin: 0 -16px; padding: 0 16px 4px; scrollbar-width: none; }
-    .chips::-webkit-scrollbar { display: none; }
-    .logo { font-size: 22px; }
-  }
+  /* Sticky filter bar */
+  .bar { position: sticky; top: 0; z-index: 5; background: rgba(255,255,255,.9);
+    -webkit-backdrop-filter: saturate(1.4) blur(14px); backdrop-filter: saturate(1.4) blur(14px); border-bottom: 1px solid var(--line); }
+  .bar .wrap { padding-top: 14px; padding-bottom: 10px; }
+  .chips { display: flex; gap: 8px; flex-wrap: wrap; min-width: 0; }
+  .subbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 10px; color: var(--muted); font-size: 13px; }
+  .sortwrap { display: inline-flex; align-items: center; gap: 6px; }
+  .sortwrap select { border: 0; background: transparent; padding: 6px 2px; font-weight: 600; color: var(--text); cursor: pointer; }
   .chip { border: 1px solid var(--line); background: var(--surface); color: var(--text); border-radius: 999px;
-    padding: 7px 14px; font: inherit; font-size: 13px; cursor: pointer; white-space: nowrap; }
+    padding: 7px 14px; font: inherit; font-size: 13px; cursor: pointer; white-space: nowrap; flex: none; }
   .chip:hover { border-color: #bdbdc4; }
   .chip.on { background: var(--accent); border-color: var(--accent); color: #fff; }
   .chip small { color: var(--muted); margin-left: 4px; }
@@ -43,10 +47,11 @@
   select { background: var(--surface); color: var(--text); border: 1px solid var(--line); border-radius: 10px;
     padding: 8px 12px; font: inherit; font-size: 13px; }
 
-  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 18px; padding: 14px 0 60px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 18px; padding: 18px 0 60px; }
   .card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden;
     cursor: pointer; transition: transform .15s ease, border-color .15s ease; text-align: left; padding: 0; color: inherit; font: inherit; }
   .card:hover { transform: translateY(-3px); border-color: #d4d4da; box-shadow: 0 10px 28px rgba(0,0,0,.08); }
+  .card:active { transform: scale(.985); }
   .ph { aspect-ratio: 4/3; background: var(--surface-2); position: relative; overflow: hidden; }
   .ph img { width: 100%; height: 100%; object-fit: cover; display: block; }
   .badge { position: absolute; top: 10px; left: 10px; background: rgba(0,0,0,.65); backdrop-filter: blur(4px); color: #fff;
@@ -63,16 +68,21 @@
   .detail.open { display: block; }
   .detail .top { position: sticky; top: 0; background: rgba(255,255,255,.92); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); z-index: 2; }
   .detail .top .wrap { display: flex; align-items: center; gap: 12px; padding-top: 12px; padding-bottom: 12px; }
-  .back { background: none; border: 1px solid var(--line); color: var(--text); border-radius: 10px; padding: 7px 12px; font: inherit; font-size: 13px; cursor: pointer; }
+  .back { background: none; border: 1px solid var(--line); color: var(--text); border-radius: 10px; padding: 7px 12px; font: inherit; font-size: 13px; cursor: pointer; flex: none; }
+  .dttl { font-weight: 600; font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; opacity: 0; transition: opacity .2s; }
+  .detail.scrolled .dttl { opacity: 1; }
   .dgrid { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: 28px; padding: 24px 0 60px; }
-  @media (max-width: 900px) { .dgrid { grid-template-columns: 1fr; } }
+  @media (max-width: 900px) { .dgrid { grid-template-columns: minmax(0, 1fr); } }
   .stage { position: relative; aspect-ratio: 4/3; background: var(--surface-2); border-radius: var(--radius); overflow: hidden; }
-  .stage img { width: 100%; height: 100%; object-fit: contain; display: block; background: var(--surface-2); }
+  .track { position: absolute; inset: 0; display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; overscroll-behavior-x: contain; }
+  .track::-webkit-scrollbar { display: none; }
+  .slide { flex: 0 0 100%; height: 100%; scroll-snap-align: center; scroll-snap-stop: always; }
+  .slide img { width: 100%; height: 100%; object-fit: contain; display: block; background: var(--surface-2); }
   .nav { position: absolute; top: 50%; transform: translateY(-50%); width: 42px; height: 42px; border-radius: 50%;
     border: 0; background: rgba(0,0,0,.55); color: #fff; font-size: 20px; cursor: pointer; }
   .nav.prev { left: 10px; } .nav.next { right: 10px; }
   .count { position: absolute; bottom: 10px; right: 12px; background: rgba(0,0,0,.6); color: #fff; padding: 2px 9px; border-radius: 999px; font-size: 12px; }
-  .thumbs { display: flex; gap: 8px; overflow-x: auto; padding: 10px 0 4px; scrollbar-width: thin; }
+  .thumbs { display: flex; gap: 8px; overflow-x: auto; padding: 10px 0 4px; scrollbar-width: thin; scroll-behavior: smooth; }
   .thumbs img { width: 92px; height: 69px; object-fit: cover; border-radius: 8px; cursor: pointer; opacity: .55; border: 2px solid transparent; flex: none; }
   .thumbs img.on { opacity: 1; border-color: var(--accent); }
   .info h2 { font: 600 30px/1.15 "Playfair Display", serif; margin: 0; }
@@ -91,8 +101,60 @@
   footer .wrap { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
   .linkbtn { background: none; border: 0; padding: 0; color: var(--muted); font: inherit; text-decoration: underline; cursor: pointer; }
 
+  .pricebar { display: none; }
+
+  /* ---------- Phones ---------- */
+  @media (max-width: 640px) {
+    header .wrap { padding-top: 18px; padding-bottom: 14px; align-items: center; }
+    .logo { font-size: 20px; letter-spacing: .16em; }
+    .meta .upd { display: none; }
+    .bar .wrap { padding-top: 10px; padding-bottom: 6px; }
+    .chips { flex-wrap: nowrap; overflow-x: auto; margin: 0 -16px; padding: 2px 16px 4px; scrollbar-width: none; scroll-snap-type: x proximity; scroll-padding-inline: 16px; }
+    .chips::-webkit-scrollbar { display: none; }
+    .chip { padding: 9px 15px; font-size: 14px; scroll-snap-align: start; }
+    .subbar { margin-top: 6px; }
+
+    .grid { gap: 14px; padding: 14px 0 32px; }
+    .card { border-radius: 18px; box-shadow: 0 1px 2px rgba(0,0,0,.04); }
+    .card:hover { transform: none; box-shadow: 0 1px 2px rgba(0,0,0,.04); }
+    .ph { aspect-ratio: 16/10; }
+    .badge { top: 12px; left: 12px; font-size: 12px; font-weight: 600; }
+    .card .body { padding: 12px 16px 16px; display: grid; grid-template-columns: 1fr auto; column-gap: 12px; align-items: end; }
+    .card h3 { font-size: 16px; grid-column: 1 / -1; }
+    .card .sub { margin-top: 2px; }
+    .card .price { margin-top: 0; font-size: 18px; font-weight: 700; white-space: nowrap; }
+
+    /* Car page: full-bleed swipe gallery, sticky price bar */
+    .detail .top .wrap { padding-top: 10px; padding-bottom: 10px; }
+    .dgrid.wrap { padding: 0; gap: 0; }
+    .dgrid { padding: 0 0 24px; }
+    .stage { border-radius: 0; }
+    .nav { display: none; }
+    .count { bottom: 12px; right: 12px; font-size: 12px; font-weight: 600; }
+    .thumbs { padding: 10px 16px 2px; gap: 6px; }
+    .thumbs img { width: 64px; height: 48px; border-radius: 6px; }
+    .info { padding: 18px 16px 0; }
+    .info h2 { font-size: 26px; }
+    .info .price { font-size: 26px; margin-top: 14px; }
+    .feat { margin-top: 16px; }
+    .feat span { font-size: 12px; padding: 5px 10px; }
+    table { margin-top: 18px; font-size: 14px; }
+    td { padding: 11px 0; }
+    td:first-child { width: 48%; }
+    .src { display: none; }
+    .pricebar { display: flex; position: sticky; bottom: 0; z-index: 3; align-items: center; justify-content: space-between; gap: 12px;
+      margin-top: 24px; padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+      background: rgba(255,255,255,.94); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); border-top: 1px solid var(--line); }
+    .pricebar b { display: block; font-size: 18px; line-height: 1.2; }
+    .pricebar small { color: var(--muted); font-size: 12px; }
+    .pricebar a { flex: none; padding: 10px 14px; border-radius: 12px; background: var(--accent); color: #fff; text-decoration: none; font-size: 14px; font-weight: 600; }
+
+    footer { padding-bottom: calc(24px + env(safe-area-inset-bottom)); }
+    footer .wrap { flex-direction: column; align-items: center; text-align: center; gap: 10px; }
+  }
+
   /* Password screen */
-  body.locked > header, body.locked > main, body.locked > footer { display: none; }
+  body.locked > header, body.locked > .bar, body.locked > main, body.locked > footer { display: none; }
   .lock { display: none; min-height: 100vh; align-items: center; justify-content: center; padding: 24px 16px; }
   body.locked .lock { display: flex; }
   .lock form { width: 100%; max-width: 360px; text-align: center; }
@@ -125,23 +187,31 @@
   </div>
 </header>
 
-<main class="wrap">
-  <div class="toolbar">
+<div class="bar">
+  <div class="wrap">
     <div class="chips" id="chips"></div>
-    <select id="sort" aria-label="Sort">
-      <option value="new">Newest first</option>
-      <option value="price-asc">Price: low to high</option>
-      <option value="price-desc">Price: high to low</option>
-      <option value="km">Lowest mileage</option>
-    </select>
+    <div class="subbar">
+      <span id="found"></span>
+      <label class="sortwrap">Sort
+        <select id="sort" aria-label="Sort">
+          <option value="new">Newest first</option>
+          <option value="price-asc">Price: low to high</option>
+          <option value="price-desc">Price: high to low</option>
+          <option value="km">Lowest mileage</option>
+        </select>
+      </label>
+    </div>
   </div>
+</div>
+
+<main class="wrap">
   <div class="grid" id="grid"></div>
 </main>
 
 <footer><div class="wrap"><span>Prices are total prices in Japanese yen (incl. tax and fees) as listed in Japan. Availability changes daily.</span><span><button class="linkbtn" id="adminBtn">Admin</button> · <button class="linkbtn" id="logout">Log out</button></span></div></footer>
 
 <section class="detail" id="detail" aria-hidden="true">
-  <div class="top"><div class="wrap"><button class="back" id="back">← All cars</button></div></div>
+  <div class="top"><div class="wrap"><button class="back" id="back">← All cars</button><span class="dttl" id="dttl"></span></div></div>
   <div class="wrap dgrid" id="dbody"></div>
 </section>
 
@@ -240,7 +310,7 @@ function startCatalog(data, sources) {
 
   let model = "All";
   const updated = data.updated ? new Date(data.updated).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "";
-  $("meta").textContent = `Ferrari · ${cars.length} cars · 2024+ · under 50,000 km${updated ? " · updated " + updated : ""}`;
+  $("meta").innerHTML = `Ferrari · 2024+ · under 50,000 km${updated ? `<span class="upd"> · updated ${esc(updated)}</span>` : ""}`;
 
   function renderChips() {
     const counts = {};
@@ -258,6 +328,7 @@ function startCatalog(data, sources) {
     if (sort === "price-desc") list.sort((a, b) => (total(b) ?? -1) - (total(a) ?? -1));
     if (sort === "km") list.sort((a, b) => (a.mileage_km ?? 1e9) - (b.mileage_km ?? 1e9));
     if (sort === "new") list.sort((a, b) => b.year - a.year || (a.mileage_km ?? 0) - (b.mileage_km ?? 0));
+    $("found").textContent = `${list.length} ${list.length === 1 ? "car" : "cars"}`;
     $("grid").innerHTML = list.length ? list.map((c) => `
       <button class="card" data-id="${esc(c.id)}">
         <div class="ph">${c.thumbs[0] ? img(c.thumbs[0], null, title(c)) : ""}<span class="badge">${esc(c.year)}</span></div>
@@ -281,43 +352,63 @@ function startCatalog(data, sources) {
       ["Japanese inspection valid until", c.inspection_until], ["Warranty until", c.warranty_until],
       ["Location", c.location ? c.location + ", Japan" : ""],
     ].filter(([, v]) => v !== "" && v != null && v !== "-" && v !== "−");
+    const n = c.photos.length;
+    const breakdown = c.price_total_jpy && c.price_jpy && c.price_total_jpy !== c.price_jpy
+      ? ` · vehicle ${yen(c.price_jpy)} + fees ${yen(c.price_total_jpy - c.price_jpy)}` : "";
+    const srcLink = sources[c.id]
+      ? `<a class="src" href="${esc(sources[c.id])}" target="_blank" rel="noopener noreferrer">Открыть на Goo-net ↗</a>` : "";
+    $("dttl").textContent = title(c);
     $("dbody").innerHTML = `
       <div>
-        <div class="stage" id="stage"></div>
+        <div class="stage">
+          <div class="track" id="track">${c.photos.map((p, k) => `<div class="slide">${img(p, c.thumbs[k], `${title(c)}, photo ${k + 1}`)}</div>`).join("")}</div>
+          ${n > 1 ? `<button class="nav prev" aria-label="Previous photo">‹</button><button class="nav next" aria-label="Next photo">›</button>` : ""}
+          ${n ? `<span class="count" id="gcount">1 / ${n}</span>` : ""}
+        </div>
         <div class="thumbs" id="thumbs">${c.thumbs.map((t, k) => img(t, null, "", `data-k="${k}"`)).join("")}</div>
       </div>
       <div class="info">
         <h2>${esc(title(c))}</h2>
         <div class="sub">${esc(c.year)} · ${kmf(c.mileage_km)}</div>
         <div class="price">${yen(total(c))}</div>
-        <div class="price-note">Total price in Japan, incl. tax and fees${c.price_total_jpy && c.price_jpy && c.price_total_jpy !== c.price_jpy ? ` · vehicle ${yen(c.price_jpy)} + fees ${yen(c.price_total_jpy - c.price_jpy)}` : ""}</div>
-        ${sources[c.id] ? `<a class="src" href="${esc(sources[c.id])}" target="_blank" rel="noopener noreferrer">Открыть на Goo-net ↗</a>` : ""}
+        <div class="price-note">Total price in Japan, incl. tax and fees${breakdown}</div>
+        ${srcLink}
         ${c.features.length ? `<div class="feat">${c.features.map((f) => `<span>${esc(f)}</span>`).join("")}</div>` : ""}
         <table>${rows.map(([k, v]) => `<tr><td>${esc(k)}</td><td>${esc(v)}</td></tr>`).join("")}</table>
+      </div>
+      <div class="pricebar">
+        <div><b>${yen(total(c))}</b><small>Total price in Japan</small></div>
+        ${sources[c.id] ? `<a href="${esc(sources[c.id])}" target="_blank" rel="noopener noreferrer">Goo-net ↗</a>` : ""}
       </div>`;
-    const show = (k) => {
-      if (!c.photos.length) return;
-      i = (k + c.photos.length) % c.photos.length;
-      $("stage").innerHTML = img(c.photos[i], c.thumbs[i], title(c)) +
-        (c.photos.length > 1 ? `<button class="nav prev" aria-label="Previous">‹</button><button class="nav next" aria-label="Next">›</button>` : "") +
-        `<span class="count">${i + 1} / ${c.photos.length}</span>`;
-      $("stage").querySelector(".prev")?.addEventListener("click", () => show(i - 1));
-      $("stage").querySelector(".next")?.addEventListener("click", () => show(i + 1));
-      document.querySelectorAll("#thumbs img").forEach((t) => t.classList.toggle("on", +t.dataset.k === i));
-      document.querySelector(`#thumbs img[data-k="${i}"]`)?.scrollIntoView({ block: "nearest", inline: "nearest" });
+
+    // Swipeable gallery: the track scrolls with snap; arrows/thumbs/keys scroll it.
+    const track = $("track"), thumbs = $("thumbs");
+    const go = (k) => n && track.scrollTo({ left: ((k + n) % n) * track.clientWidth, behavior: "smooth" });
+    const mark = () => {
+      if ($("gcount")) $("gcount").textContent = `${i + 1} / ${n}`;
+      thumbs.querySelectorAll("img").forEach((t) => t.classList.toggle("on", +t.dataset.k === i));
+      const t = thumbs.querySelector(`img[data-k="${i}"]`);
+      if (t) thumbs.scrollTo({ left: t.offsetLeft - thumbs.clientWidth / 2 + t.clientWidth / 2 });
     };
-    $("thumbs").addEventListener("click", (e) => e.target.dataset.k && show(+e.target.dataset.k));
-    show(0);
-    $("detail").onkeydown = null;
+    track.addEventListener("scroll", () => {
+      const k = Math.round(track.scrollLeft / track.clientWidth);
+      if (k !== i && k >= 0 && k < n) { i = k; mark(); }
+    }, { passive: true });
+    $("dbody").querySelector(".prev")?.addEventListener("click", () => go(i - 1));
+    $("dbody").querySelector(".next")?.addEventListener("click", () => go(i + 1));
+    thumbs.addEventListener("click", (e) => e.target.dataset.k && go(+e.target.dataset.k));
+    mark();
+    $("detail").onscroll = () => $("detail").classList.toggle("scrolled", $("detail").scrollTop > 280);
     document.onkeydown = (e) => {
       if (!$("detail").classList.contains("open")) return;
-      if (e.key === "ArrowLeft") show(i - 1);
-      if (e.key === "ArrowRight") show(i + 1);
+      if (e.key === "ArrowLeft") go(i - 1);
+      if (e.key === "ArrowRight") go(i + 1);
       if (e.key === "Escape") location.hash = "";
     };
     $("detail").classList.add("open");
     $("detail").setAttribute("aria-hidden", "false");
     $("detail").scrollTop = 0;
+    $("detail").classList.remove("scrolled");
     document.body.style.overflow = "hidden";
   }
 
