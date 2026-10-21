@@ -138,7 +138,7 @@
   <div class="grid" id="grid"></div>
 </main>
 
-<footer><div class="wrap"><span>Prices are in Japanese yen as listed in Japan. Availability changes daily.</span><span><button class="linkbtn" id="adminBtn">Admin</button> · <button class="linkbtn" id="logout">Log out</button></span></div></footer>
+<footer><div class="wrap"><span>Prices are total prices in Japanese yen (incl. tax and fees) as listed in Japan. Availability changes daily.</span><span><button class="linkbtn" id="adminBtn">Admin</button> · <button class="linkbtn" id="logout">Log out</button></span></div></footer>
 
 <section class="detail" id="detail" aria-hidden="true">
   <div class="top"><div class="wrap"><button class="back" id="back">← All cars</button></div></div>
@@ -232,6 +232,8 @@ function startCatalog(data, sources) {
   const yen = (n) => n == null ? "Price on request" : "¥" + n.toLocaleString("en-US");
   const kmf = (n) => n == null ? "—" : n.toLocaleString("en-US") + " km";
   const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  // Total payment in Japan (支払総額): vehicle price + taxes + registration/dealer fees.
+  const total = (c) => c.price_total_jpy ?? c.price_jpy;
   const title = (c) => `${c.make} ${c.model}${c.grade ? " " + c.grade : ""}`;
   const img = (src, fallback, alt, cls = "") =>
     `<img src="${esc(src)}" ${fallback ? `onerror="this.onerror=null;this.src='${esc(fallback)}'"` : ""} alt="${esc(alt)}" loading="lazy" referrerpolicy="no-referrer" ${cls}>`;
@@ -251,9 +253,9 @@ function startCatalog(data, sources) {
   function renderGrid() {
     const sort = $("sort").value;
     const list = cars.filter((c) => model === "All" || c.model === model).slice();
-    const P = (c) => c.price_jpy ?? Infinity;
+    const P = (c) => total(c) ?? Infinity;
     if (sort === "price-asc") list.sort((a, b) => P(a) - P(b));
-    if (sort === "price-desc") list.sort((a, b) => (b.price_jpy ?? -1) - (a.price_jpy ?? -1));
+    if (sort === "price-desc") list.sort((a, b) => (total(b) ?? -1) - (total(a) ?? -1));
     if (sort === "km") list.sort((a, b) => (a.mileage_km ?? 1e9) - (b.mileage_km ?? 1e9));
     if (sort === "new") list.sort((a, b) => b.year - a.year || (a.mileage_km ?? 0) - (b.mileage_km ?? 0));
     $("grid").innerHTML = list.length ? list.map((c) => `
@@ -262,7 +264,7 @@ function startCatalog(data, sources) {
         <div class="body">
           <h3>${esc(title(c))}</h3>
           <div class="sub">${kmf(c.mileage_km)}${c.color ? " · " + esc(c.color) : ""}</div>
-          <div class="price">${yen(c.price_jpy)}</div>
+          <div class="price">${yen(total(c))}</div>
         </div>
       </button>`).join("") : `<div class="empty">No cars match right now.</div>`;
   }
@@ -287,8 +289,8 @@ function startCatalog(data, sources) {
       <div class="info">
         <h2>${esc(title(c))}</h2>
         <div class="sub">${esc(c.year)} · ${kmf(c.mileage_km)}</div>
-        <div class="price">${yen(c.price_jpy)}</div>
-        <div class="price-note">Vehicle price in Japan</div>
+        <div class="price">${yen(total(c))}</div>
+        <div class="price-note">Total price in Japan, incl. tax and fees${c.price_total_jpy && c.price_jpy && c.price_total_jpy !== c.price_jpy ? ` · vehicle ${yen(c.price_jpy)} + fees ${yen(c.price_total_jpy - c.price_jpy)}` : ""}</div>
         ${sources[c.id] ? `<a class="src" href="${esc(sources[c.id])}" target="_blank" rel="noopener noreferrer">Открыть на Goo-net ↗</a>` : ""}
         ${c.features.length ? `<div class="feat">${c.features.map((f) => `<span>${esc(f)}</span>`).join("")}</div>` : ""}
         <table>${rows.map(([k, v]) => `<tr><td>${esc(k)}</td><td>${esc(v)}</td></tr>`).join("")}</table>
