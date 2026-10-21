@@ -160,6 +160,16 @@
   .company dl { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px 32px; margin: 0; }
   .company dt { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
   .company dd { margin: 6px 0 0; font-size: 15px; }
+  .company dd a { color: inherit; }
+  .company .jp { margin-top: 32px; background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 22px 24px;
+    font-family: "Hiragino Sans", "Noto Sans JP", "Yu Gothic", Inter, sans-serif; }
+  .company .jp-title { margin: 0 0 10px; font-weight: 700; font-size: 15px; }
+  .company .jp table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  .company .jp th, .company .jp td { text-align: left; padding: 9px 0; border-top: 1px solid var(--line); vertical-align: top; }
+  .company .jp th { width: 34%; color: var(--muted); font-weight: 500; padding-right: 12px; }
+  .legal-links { display: flex; flex-wrap: wrap; gap: 8px 22px; margin: 18px 0 0; font-size: 14px; }
+  .legal-links a { color: var(--bronze); }
+  .tba { display: inline-block; font-size: 12px; color: var(--muted); background: #F1EBDD; border-radius: 6px; padding: 1px 8px; }
   footer { background: var(--dark); color: var(--on-dark-muted); font-size: 13px; border-top: 1px solid rgba(217,180,106,.15); }
   footer .wrap { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap;
     padding-top: 28px; padding-bottom: calc(28px + env(safe-area-inset-bottom)); }
@@ -406,14 +416,28 @@
         <img src="assets/lion.svg" alt="" style="height:64px;width:auto;margin-bottom:14px">
         <h3 style="font-size:26px;font-weight:600">Lion Motors</h3>
       </div>
-      <dl>
-        <div><dt>Legal name</dt><dd id="co-name"></dd></div>
-        <div><dt>Address</dt><dd id="co-address"></dd></div>
-        <div><dt>Dealer licence</dt><dd id="co-licence"></dd></div>
-        <div><dt>Phone</dt><dd id="co-phone"></dd></div>
-        <div><dt>Email</dt><dd id="co-email"></dd></div>
-        <div><dt>Hours</dt><dd id="co-hours"></dd></div>
-      </dl>
+      <div>
+        <dl>
+          <div><dt>Legal name</dt><dd data-co="nameEn"></dd></div>
+          <div><dt>Representative</dt><dd data-co="representativeEn"></dd></div>
+          <div><dt>Address</dt><dd data-co="addressEn"></dd></div>
+          <div><dt>Phone</dt><dd><a data-co="phone" data-co-href="tel:phone"></a></dd></div>
+          <div><dt>Email</dt><dd><a data-co="email" data-co-href="mailto:email"></a></dd></div>
+          <div><dt>Hours</dt><dd data-co="hours"></dd></div>
+        </dl>
+        <div class="jp" lang="ja">
+          <p class="jp-title">会社概要・古物営業法に基づく表示</p>
+          <table>
+            <tr><th>商号</th><td data-co="nameJa"></td></tr>
+            <tr><th>代表者</th><td data-co="representativeJa"></td></tr>
+            <tr><th>所在地</th><td id="jp-addr"></td></tr>
+            <tr><th>電話番号</th><td data-co="phone"></td></tr>
+            <tr><th>古物商許可</th><td id="jp-lic"></td></tr>
+            <tr><th>取扱品目</th><td data-co="goodsCategoryJa"></td></tr>
+          </table>
+        </div>
+        <p class="legal-links"><a href="legal/tokushoho.html">特定商取引法に基づく表記</a><a href="legal/privacy.html">Privacy Policy / プライバシーポリシー</a></p>
+      </div>
     </div>
   </section>
 </main>
@@ -421,31 +445,19 @@
 <footer>
   <div class="wrap">
     <a href="#top" class="logo"><img class="mark" src="assets/lion.svg" alt=""><span><span>LION</span> MOTORS</span></a>
-    <span>© <span id="year"></span> Lion Motors. Photos: <a href="https://unsplash.com" target="_blank" rel="noopener">Unsplash</a></span>
+    <span>© <span id="year"></span> Lion Motors · <a href="legal/tokushoho.html">特定商取引法に基づく表記</a> · <a href="legal/privacy.html">Privacy</a> · Photos: <a href="https://unsplash.com" target="_blank" rel="noopener">Unsplash</a></span>
   </div>
 </footer>
 
+<script src="assets/company.js"></script>
 <script>
-// ---- Company details: fill these in, everything on the page updates from here.
-const COMPANY = {
-  legalName: "[Company legal name]",
-  address:   "[Address in Japan]",
-  licence:   "[Dealer licence No.]",
-  phone:     "[+81 phone]",
-  email:     "[email@company.com]",
-  hours:     "Mon–Sat, 10:00–19:00 JST",
-  whatsapp:  "[WhatsApp number, digits only]",   // e.g. 819012345678
-  telegram:  "[telegram_username]",
-};
-
+// Company details live in assets/company.js (shared with the legal pages).
+const COMPANY = window.COMPANY, filled = window.COMPANY_HAS;
 const $ = (id) => document.getElementById(id);
-const filled = (v) => v && !v.startsWith("[");
-$("co-name").textContent = COMPANY.legalName;
-$("co-address").textContent = COMPANY.address;
-$("co-licence").textContent = COMPANY.licence;
-$("co-phone").textContent = COMPANY.phone;
-$("co-email").textContent = COMPANY.email;
-$("co-hours").textContent = COMPANY.hours;
+const TBA = '<span class="tba">未設定 / To be announced</span>';
+$("jp-addr").innerHTML = filled(COMPANY.addressJa) ? (filled(COMPANY.postalCode) ? "〒" + COMPANY.postalCode + " " : "") + COMPANY.addressJa.replace(/[<>&]/g, "") : TBA;
+$("jp-lic").innerHTML = filled(COMPANY.licenceCommissionJa) && filled(COMPANY.licenceNo)
+  ? `${COMPANY.licenceCommissionJa} 許可 第${COMPANY.licenceNo}号` : TBA;
 $("ch-wa-t").textContent = filled(COMPANY.whatsapp) ? "+" + COMPANY.whatsapp : "Number coming soon";
 $("ch-tg-t").textContent = filled(COMPANY.telegram) ? "@" + COMPANY.telegram : "Username coming soon";
 $("ch-mail-t").textContent = filled(COMPANY.email) ? COMPANY.email : "Address coming soon";

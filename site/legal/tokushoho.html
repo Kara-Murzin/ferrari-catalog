@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0B0B0C">
+<title>特定商取引法に基づく表記 | Lion Motors</title>
+<link rel="icon" href="../assets/lion.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="legal.css">
+</head>
+<body>
+<header><div class="wrap">
+  <a class="logo" href="../"><img src="../assets/lion.svg" alt=""><b>LION MOTORS</b></a>
+  <nav><a href="privacy.html">Privacy Policy</a></nav>
+</div></header>
+
+<main><div class="wrap">
+  <p class="eyebrow">Legal notice</p>
+  <h1>特定商取引法に基づく表記</h1>
+  <p class="sub">Notation based on the Act on Specified Commercial Transactions</p>
+
+  <table>
+    <tr><th>販売業者<small>Seller</small></th>
+      <td><span data-co="nameJa"></span><span class="en" data-co="nameEn" data-co-empty=" "></span></td></tr>
+    <tr><th>運営統括責任者<small>Representative</small></th>
+      <td><span data-co="representativeJa"></span><span class="en" data-co="representativeEn" data-co-empty=" "></span></td></tr>
+    <tr><th>所在地<small>Address</small></th>
+      <td><span id="addrJa"></span><span class="en" data-co="addressEn" data-co-empty=" "></span></td></tr>
+    <tr><th>電話番号<small>Phone</small></th>
+      <td><a data-co="phone" data-co-href="tel:phone"></a><span class="en">お問い合わせはメールでも受け付けております。 / Inquiries are also accepted by email.</span></td></tr>
+    <tr><th>メールアドレス<small>Email</small></th>
+      <td><a data-co="email" data-co-href="mailto:email"></a></td></tr>
+    <tr><th>営業時間<small>Business hours</small></th>
+      <td><span data-co="hoursJa"></span><span class="en" data-co="hours" data-co-empty=" "></span></td></tr>
+    <tr><th>古物商許可<small>Secondhand dealer licence</small></th>
+      <td><span id="licJa"></span><span class="en" id="licEn"></span></td></tr>
+    <tr><th>取扱品目<small>Goods handled</small></th>
+      <td><span data-co="goodsCategoryJa"></span><span class="en" data-co="goodsCategoryEn" data-co-empty=" "></span></td></tr>
+    <tr><th>販売価格<small>Price</small></th>
+      <td>各車両ページに表示の金額(日本国内における支払総額・消費税込)。
+        <span class="en">The amount shown on each vehicle page (total price in Japan, including consumption tax).</span></td></tr>
+    <tr><th>商品代金以外の必要料金<small>Other charges</small></th>
+      <td>輸出手続費用、国内陸送費、船積費用、海上運賃、海上保険料、銀行送金手数料、ならびに輸入国で発生する関税・税金・通関費用等。金額はお見積りにて個別にご案内します。
+        <span class="en">Export handling, inland transport, loading, ocean freight, marine insurance, bank transfer fees, and import duties, taxes and customs costs in the destination country. These are quoted individually.</span></td></tr>
+    <tr><th>お支払い方法<small>Payment method</small></th>
+      <td><span data-co="paymentMethodJa"></span><span class="en" data-co="paymentMethodEn" data-co-empty=" "></span></td></tr>
+    <tr><th>お支払い時期<small>Payment timing</small></th>
+      <td><span data-co="paymentTimingJa"></span><span class="en" data-co="paymentTimingEn" data-co-empty=" "></span></td></tr>
+    <tr><th>商品の引渡時期<small>Delivery</small></th>
+      <td><span data-co="deliveryJa"></span><span class="en" data-co="deliveryEn" data-co-empty=" "></span></td></tr>
+    <tr><th>返品・キャンセル<small>Returns and cancellation</small></th>
+      <td><span data-co="returnsJa"></span><span class="en" data-co="returnsEn" data-co-empty=" "></span></td></tr>
+    <tr><th>その他<small>Notes</small></th>
+      <td>中古車のため、掲載情報と実車の状態に差異がある場合があります。ご契約前に最新の状態をご確認ください。掲載車両は販売済みとなる場合があります。
+        <span class="en">As these are used vehicles, the actual condition may differ from the listing. Please confirm the latest condition before the contract. Listed vehicles may already be sold.</span></td></tr>
+  </table>
+  <p class="note">日本語版と英語版に相違がある場合は、日本語版が優先します。 / If the Japanese and English versions differ, the Japanese version prevails.</p>
+</div></main>
+
+<footer><div class="wrap"><span>© <span id="y"></span> Lion Motors</span><span><a href="../">Home</a> · <a href="privacy.html">Privacy Policy</a></span></div></footer>
+
+<script src="../assets/company.js"></script>
+<script>
+  const C = window.COMPANY, has = window.COMPANY_HAS, TBA = '<span class="tba">未設定 / To be announced</span>';
+  document.getElementById("y").textContent = new Date().getFullYear();
+  document.getElementById("addrJa").innerHTML = has(C.addressJa)
+    ? (has(C.postalCode) ? "〒" + C.postalCode + " " : "") + C.addressJa.replace(/[<>&]/g, "") : TBA;
+  const lic = has(C.licenceCommissionJa) && has(C.licenceNo);
+  document.getElementById("licJa").innerHTML = lic ? `${C.licenceCommissionJa} 許可 第${C.licenceNo}号` : TBA;
+  document.getElementById("licEn").textContent = lic && has(C.licenceCommissionEn) ? `${C.licenceCommissionEn}, licence No. ${C.licenceNo}` : "";
+</script>
+</body>
+</html>
