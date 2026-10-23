@@ -176,17 +176,19 @@
   .lock button[type=submit] { width: 100%; margin-top: 10px; background: var(--gold-grad); color: var(--dark); border: 0; border-radius: 10px;
     padding: 12px; font: inherit; font-weight: 600; cursor: pointer; }
   .lock button[disabled] { opacity: .6; cursor: wait; }
+  .lock .lock-cancel { display: inline-block; margin-top: 14px; color: var(--on-dark-muted); font-size: 13px; }
   .lock .err { color: #F08A80; font-size: 13px; min-height: 20px; margin-top: 10px; }
 </style>
 </head>
 <body class="locked">
 <section class="lock" id="lock">
-  <form id="lockForm" autocomplete="on">
+  <form id="lockForm" autocomplete="on" onsubmit="return false">
     <img class="mark" src="../assets/lion.svg" alt="">
     <h1 class="logo">LION MOTORS</h1>
-    <p id="lockLabel">Private catalog. Enter the password to continue.</p>
-    <input id="lockInput" type="password" name="password" autocomplete="current-password" placeholder="Password" required>
-    <button type="submit" id="lockBtn">Open catalog</button>
+    <p id="lockLabel">Loading…</p>
+    <input id="lockInput" type="password" autocomplete="current-password" placeholder="Password" required disabled>
+    <button type="submit" id="lockBtn" disabled>Loading…</button>
+    <a href="./" id="lockCancel" class="lock-cancel" hidden>Cancel</a>
     <div class="err" id="lockErr" role="alert"></div>
   </form>
 </section>
@@ -250,6 +252,7 @@ function askPassword(blob, label, button) {
   const btn = document.getElementById("lockBtn"), err = document.getElementById("lockErr");
   document.getElementById("lockLabel").textContent = label;
   btn.textContent = button;
+  input.disabled = false; btn.disabled = false;
   input.value = ""; err.textContent = "";
   document.body.classList.add("locked");
   input.focus();
@@ -279,6 +282,12 @@ async function unlock(storeKey, blob, label, button) {
   return data;
 }
 
+// Never keep a password in the address bar (older pages could submit the form natively).
+(() => {
+  const q = new URLSearchParams(location.search);
+  if (q.has("password")) { q.delete("password"); history.replaceState(null, "", location.pathname + (q.toString() ? "?" + q : "") + location.hash); }
+})();
+
 // data.js changes daily (and when passwords change): load it with a cache-busting query.
 (() => {
   const el = document.createElement("script");
@@ -300,7 +309,9 @@ async function boot() {
   if (q.get("admin") === "0") store.del("admin_pw");
   let sources = {};
   if (window.ADMIN_ENC && ((q.has("admin") && q.get("admin") !== "0") || store.get("admin_pw"))) {
+    document.getElementById("lockCancel").hidden = false;   // lets you go back to the normal catalog
     sources = (await unlock("admin_pw", window.ADMIN_ENC, "Admin password", "Enable admin mode")).sources;
+    document.getElementById("lockCancel").hidden = true;
   }
   if (q.has("admin")) history.replaceState(null, "", location.pathname + location.hash);
   document.body.classList.remove("locked");
