@@ -157,7 +157,7 @@ WORDS.update({
     "ミラトコット": "Mira Tocot", "ミウラ": "Miura", "ティファニー": "Tiffany", "スウィング": "Swing", "マリブ": "Malibu", "ポラーラ": "Polara",
     "スタッグ": "Stag", "リンカーン": "Lincoln", "ダッジ": "Dodge", "シボレー": "Chevrolet", "オースチン": "Austin", "ラム": "Ram",
     "シェビーバン": "Chevy Van", "スーパフォーマンス": "Superformance", "スーパーフォーマンス": "Superformance", "アレグロ": "Allegro",
-    "トロフェオ": "Trofeo", "ストロンガーザンタイム": "Stronger Than Time", "モデル": "Model", "ファーストエディション": "First Edition",
+    "シェルビー": "Shelby", "トロフェオ": "Trofeo", "ストロンガーザンタイム": "Stronger Than Time", "モデル": "Model", "ファーストエディション": "First Edition",
     "コンチネンタル": "Continental", "シルバー": "Silver", "スーパー": "Super",
 })
 
@@ -317,12 +317,19 @@ def yes_no(s, yes, no):
     return ""
 
 
+OTHER_MAKES = {"輸入車その他", "国産車その他"}   # Carsensor's "other imported / other Japanese" buckets
+
+
 def to_public(c):
     disp = re.search(r"(\d{3,5})", nfkc(c.get("displacement_jp", "")))
     grade = latin(c.get("grade_jp", ""))
+    mk, md = make(c["brand_jp"]), model(c["brand_jp"], c["model_jp"])
+    if nfkc(c["brand_jp"]) in OTHER_MAKES:
+        # The real make is written in the model field ("Superformance", "Hudson"...); grade then becomes the model.
+        mk, md, grade = latin(c["model_jp"]) or mk, grade, ""
     return {
-        "make": make(c["brand_jp"]),
-        "model": model(c["brand_jp"], c["model_jp"]),
+        "make": mk,
+        "model": md,
         "grade": grade[:80],
         "year": c.get("year"),
         "km": km(c.get("mileage_jp", "")),
