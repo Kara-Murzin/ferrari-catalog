@@ -144,8 +144,20 @@ def usd_rate():
             return json.load(f)["JPY_USD"]
 
 
+# Listings that are not cars: trikes, three-wheelers, UTVs, tractors, construction machinery.
+NOT_A_CAR = re.compile(r"トライク|TRIKE|トラクター|TRACTOR|ホイルローダー|タイヤショベル|キャタピラー|POLARIS|ポラリス|カンパーニャ|T-REX", re.I)
+
+
+def is_car(c):
+    return not NOT_A_CAR.search(cs_i18n.nfkc(f"{c['brand_jp']} {c['model_jp']} {c['grade_jp']}"))
+
+
 def build(crawled, cars):
     rate = usd_rate()
+    dropped = [c for c in cars if not is_car(c)]
+    cars = [c for c in cars if is_car(c)]
+    if dropped:
+        print(f"  skipped {len(dropped)} non-car listings (trikes, UTVs, tractors...)")
     public, sources, unknown = [], {}, set()
     for c in cars:
         pid = seal.short_id(c["cs_id"])
