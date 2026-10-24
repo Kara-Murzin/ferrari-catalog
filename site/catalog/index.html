@@ -1,15 +1,15 @@
 <!doctype html>
-<html lang="en">
+<html lang="ru">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0B0B0C">
 <meta name="robots" content="noindex, nofollow">
 <meta name="referrer" content="no-referrer">
-<title>Lion Motors</title>
+<title>Lion Motors — каталог</title>
 <link rel="icon" href="../assets/lion.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&family=Poppins:wght@500;600&family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@500;600&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg: #FAF7F0; --surface: #FFFDF8; --surface-2: #F3EEE3; --line: #E8E2D4;
@@ -23,143 +23,98 @@
   html, body { margin: 0; background: var(--bg); color: var(--text);
     font: 15px/1.5 Inter, system-ui, -apple-system, sans-serif; -webkit-font-smoothing: antialiased;
     -webkit-tap-highlight-color: transparent; -webkit-text-size-adjust: 100%; }
-  button, select { -webkit-tap-highlight-color: transparent; }
+  button, select, input { -webkit-tap-highlight-color: transparent; font: inherit; }
   a { color: inherit; }
-  .wrap { max-width: 1240px; margin: 0 auto; padding: 0 max(16px, env(safe-area-inset-left)) 0 max(16px, env(safe-area-inset-right)); }
+  .wrap { max-width: 1280px; margin: 0 auto; padding: 0 max(16px, env(safe-area-inset-left)) 0 max(16px, env(safe-area-inset-right)); }
 
-  header { background: var(--dark); border-bottom: 1px solid rgba(217,180,106,.18); }
-  header .wrap { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding-top: 28px; padding-bottom: 22px; flex-wrap: wrap; }
-  h1 { font: 600 30px/1.1 "Playfair Display", serif; margin: 0; letter-spacing: .3px; }
-  .logo { font: 600 24px/1 Poppins, Inter, system-ui, sans-serif; letter-spacing: .12em; margin: 0; }
-  .logo b, .lock .logo { background: var(--gold-grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
-  .logo a { display: inline-flex; align-items: center; gap: 12px; }
-  .logo .mark { height: 36px; width: auto; flex: none; }
-  .lock .mark { display: block; height: 120px; width: auto; margin: 0 auto 22px; }
+  header { background: var(--dark); border-bottom: 1px solid rgba(217,180,106,.18); color: var(--on-dark); }
+  header .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-top: 18px; padding-bottom: 16px; flex-wrap: wrap; }
+  .logo { font: 600 22px/1 Poppins, Inter, sans-serif; letter-spacing: .12em; margin: 0; }
+  .logo a { display: inline-flex; align-items: center; gap: 12px; text-decoration: none; }
+  .logo b, .lock .logo { font-weight: inherit; background: var(--gold-grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .logo .mark { height: 34px; width: auto; flex: none; }
   .meta { color: var(--on-dark-muted); font-size: 13px; }
 
-  /* Sticky filter bar */
-  .bar { position: sticky; top: 0; z-index: 5; background: rgba(250,247,240,.9);
+  /* Filters */
+  .bar { position: sticky; top: 0; z-index: 5; background: rgba(250,247,240,.94);
     -webkit-backdrop-filter: saturate(1.4) blur(14px); backdrop-filter: saturate(1.4) blur(14px); border-bottom: 1px solid var(--line); }
-  .bar .wrap { padding-top: 14px; padding-bottom: 10px; }
-  .chips { display: flex; gap: 8px; flex-wrap: wrap; min-width: 0; }
-  .subbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 10px; color: var(--muted); font-size: 13px; }
-  .sortwrap { display: inline-flex; align-items: center; gap: 6px; }
-  .sortwrap select { border: 0; background: transparent; padding: 6px 2px; font-weight: 600; color: var(--text); cursor: pointer; }
-  .chip { border: 1px solid var(--line); background: var(--surface); color: var(--text); border-radius: 999px;
-    padding: 7px 14px; font: inherit; font-size: 13px; cursor: pointer; white-space: nowrap; flex: none; }
-  .chip:hover { border-color: #bdbdc4; }
-  .chip.on { background: var(--dark); border-color: var(--dark); color: var(--gold-hi); }
-  .chip small { color: var(--muted); margin-left: 4px; }
-  .chip.on small { color: rgba(243,223,162,.7); }
-  select { background: var(--surface); color: var(--text); border: 1px solid var(--line); border-radius: 10px;
-    padding: 8px 12px; font: inherit; font-size: 13px; }
+  .bar .wrap { padding-top: 12px; padding-bottom: 10px; }
+  .filters { display: grid; grid-template-columns: 2fr 1.4fr 1.4fr 1fr 1fr 1fr 1fr 1fr 1fr; gap: 8px; }
+  .filters input, .filters select { width: 100%; background: var(--surface); color: var(--text); border: 1px solid var(--line);
+    border-radius: 10px; padding: 9px 10px; font-size: 13.5px; outline: none; min-width: 0; }
+  .filters input:focus, .filters select:focus { border-color: var(--gold-lo); }
+  .subbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 8px; color: var(--muted); font-size: 13px; }
+  .subbar select { border: 0; background: transparent; padding: 4px 2px; font-weight: 600; color: var(--text); cursor: pointer; }
+  .subbar .reset { background: none; border: 0; color: var(--accent); cursor: pointer; padding: 0; font-size: 13px; }
+  .subbar > span { display: inline-flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  #found, .subbar label { white-space: nowrap; }
+  .ftoggle { display: none; }
 
-  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 18px; padding: 18px 0 60px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 16px; padding: 18px 0 24px; }
   .card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden;
-    cursor: pointer; transition: transform .15s ease, border-color .15s ease; text-align: left; padding: 0; color: inherit; font: inherit; }
-  .card:hover { transform: translateY(-3px); border-color: #d4d4da; box-shadow: 0 10px 28px rgba(0,0,0,.08); }
+    cursor: pointer; transition: transform .15s ease, box-shadow .15s ease; text-align: left; padding: 0; color: inherit; }
+  .card:hover { transform: translateY(-3px); box-shadow: 0 10px 28px rgba(0,0,0,.08); }
   .card:active { transform: scale(.985); }
   .ph { aspect-ratio: 4/3; background: var(--surface-2); position: relative; overflow: hidden; }
   .ph img { width: 100%; height: 100%; object-fit: cover; display: block; }
-  .badge { position: absolute; top: 10px; left: 10px; background: rgba(0,0,0,.65); backdrop-filter: blur(4px); color: #fff;
-    padding: 3px 9px; border-radius: 999px; font-size: 12px; }
-  .card .body { padding: 14px 16px 16px; }
-  .card h3 { margin: 0; font-size: 17px; font-weight: 600; }
-  .card .sub { color: var(--muted); font-size: 13px; margin-top: 2px; }
-  .card .price { margin-top: 12px; font-size: 20px; font-weight: 600; }
-  .card .price small { color: var(--muted); font-size: 12px; font-weight: 400; margin-left: 4px; }
+  .badge { position: absolute; top: 10px; left: 10px; background: rgba(11,11,12,.72); color: var(--gold-hi);
+    padding: 3px 9px; border-radius: 999px; font-size: 12px; font-weight: 600; }
+  .card .body { padding: 12px 14px 14px; }
+  .card h3 { margin: 0; font-size: 16px; font-weight: 600; line-height: 1.3; }
+  .card .grade { color: var(--muted); font-size: 12.5px; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .card .sub { color: var(--muted); font-size: 13px; margin-top: 6px; }
+  .card .price { margin-top: 10px; display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+  .card .price b { font-size: 19px; font-weight: 700; }
+  .card .price small { color: var(--muted); font-size: 12px; white-space: nowrap; }
+  .more { display: block; margin: 0 auto 48px; background: var(--dark); color: var(--gold-hi); border: 0; border-radius: 999px; padding: 12px 26px; font-weight: 600; cursor: pointer; }
   .empty { color: var(--muted); padding: 60px 0; text-align: center; grid-column: 1/-1; }
 
   /* Detail */
   .detail { position: fixed; inset: 0; background: var(--bg); overflow-y: auto; z-index: 10; display: none; }
   .detail.open { display: block; }
-  .detail .top { position: sticky; top: 0; background: rgba(250,247,240,.92); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); z-index: 2; }
+  .detail .top { position: sticky; top: 0; background: rgba(250,247,240,.94); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); z-index: 2; }
   .detail .top .wrap { display: flex; align-items: center; gap: 12px; padding-top: 12px; padding-bottom: 12px; }
-  .back { background: none; border: 1px solid var(--line); color: var(--text); border-radius: 10px; padding: 7px 12px; font: inherit; font-size: 13px; cursor: pointer; flex: none; }
-  .dttl { font-weight: 600; font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; opacity: 0; transition: opacity .2s; }
-  .detail.scrolled .dttl { opacity: 1; }
-  .dgrid { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: 28px; padding: 24px 0 60px; }
-  @media (max-width: 900px) { .dgrid { grid-template-columns: minmax(0, 1fr); } }
-  .stage { position: relative; aspect-ratio: 4/3; background: var(--surface-2); border-radius: var(--radius); overflow: hidden; }
-  .track { position: absolute; inset: 0; display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; overscroll-behavior-x: contain; }
-  .track::-webkit-scrollbar { display: none; }
-  .slide { flex: 0 0 100%; height: 100%; scroll-snap-align: center; scroll-snap-stop: always; }
-  .slide img { width: 100%; height: 100%; object-fit: contain; display: block; background: var(--surface-2); }
-  .nav { position: absolute; top: 50%; transform: translateY(-50%); width: 42px; height: 42px; border-radius: 50%;
-    border: 0; background: rgba(0,0,0,.55); color: #fff; font-size: 20px; cursor: pointer; }
-  .nav.prev { left: 10px; } .nav.next { right: 10px; }
-  .count { position: absolute; bottom: 10px; right: 12px; background: rgba(0,0,0,.6); color: #fff; padding: 2px 9px; border-radius: 999px; font-size: 12px; }
-  .thumbs { display: flex; gap: 8px; overflow-x: auto; padding: 10px 0 4px; scrollbar-width: thin; scroll-behavior: smooth; }
-  .thumbs img { width: 92px; height: 69px; object-fit: cover; border-radius: 8px; cursor: pointer; opacity: .55; border: 2px solid transparent; flex: none; }
-  .thumbs img.on { opacity: 1; border-color: var(--gold-lo); }
-  .info h2 { font: 600 30px/1.15 Poppins, Inter, sans-serif; margin: 0; letter-spacing: -.01em; }
-  .info .sub { color: var(--muted); margin-top: 6px; }
-  .info .price { font-size: 30px; font-weight: 600; margin: 18px 0 2px; }
+  .back { background: none; border: 1px solid var(--line); color: var(--text); border-radius: 10px; padding: 7px 12px; font-size: 13px; cursor: pointer; flex: none; }
+  .dttl { font-weight: 600; font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .dgrid { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 28px; padding: 24px 0 60px; }
+  .stage { aspect-ratio: 4/3; background: var(--surface-2); border-radius: var(--radius); overflow: hidden; }
+  .stage img { width: 100%; height: 100%; object-fit: contain; display: block; }
+  .info h2 { font: 600 28px/1.15 Poppins, Inter, sans-serif; margin: 0; letter-spacing: -.01em; }
+  .info .grade { color: var(--muted); margin-top: 6px; }
+  .info .price { font-size: 30px; font-weight: 700; margin: 18px 0 2px; }
   .info .price-note { color: var(--muted); font-size: 13px; }
+  .actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; padding: 11px 18px; border-radius: 12px; font-weight: 600; font-size: 14px; text-decoration: none; cursor: pointer; border: 0; }
+  .btn-gold { background: var(--gold-grad); color: var(--dark); }
+  .btn-line { border: 1px solid var(--accent); color: var(--accent); background: transparent; }
   table { width: 100%; border-collapse: collapse; margin-top: 22px; font-size: 14px; }
-  td { padding: 9px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+  td { padding: 10px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
   td:first-child { color: var(--muted); width: 45%; }
-  .src { display: inline-block; margin-top: 14px; padding: 8px 14px; border: 1px solid var(--accent); border-radius: 10px;
-    color: var(--accent); text-decoration: none; font-size: 13px; font-weight: 500; }
-  .src:hover { background: var(--accent-soft); }
-  .feat { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 20px; }
-  .feat span { background: var(--accent-soft); color: #6E5220; border-radius: 999px; padding: 4px 10px; font-size: 12px; }
+  .note { color: var(--muted); font-size: 12.5px; margin-top: 14px; }
+
   footer { color: var(--muted); font-size: 12px; border-top: 1px solid var(--line); padding: 18px 0 30px; }
   footer .wrap { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
-  .linkbtn { background: none; border: 0; padding: 0; color: var(--muted); font: inherit; text-decoration: underline; cursor: pointer; }
+  .linkbtn { background: none; border: 0; padding: 0; color: var(--muted); text-decoration: underline; cursor: pointer; font-size: 12px; }
 
-  .pricebar { display: none; }
-
-  /* ---------- Phones ---------- */
+  @media (max-width: 1100px) { .filters { grid-template-columns: repeat(4, 1fr); } .filters .q { grid-column: 1 / -1; } }
+  @media (max-width: 900px) { .dgrid { grid-template-columns: minmax(0, 1fr); } }
   @media (max-width: 640px) {
-    header .wrap { padding-top: 18px; padding-bottom: 14px; align-items: center; }
-    .logo { font-size: 20px; letter-spacing: .16em; }
-    .logo .mark { height: 30px; }
-    .logo a { gap: 10px; }
-    .meta .upd { display: none; }
-    .bar .wrap { padding-top: 10px; padding-bottom: 6px; }
-    .chips { flex-wrap: nowrap; overflow-x: auto; margin: 0 -16px; padding: 2px 16px 4px; scrollbar-width: none; scroll-snap-type: x proximity; scroll-padding-inline: 16px; }
-    .chips::-webkit-scrollbar { display: none; }
-    .chip { padding: 9px 15px; font-size: 14px; scroll-snap-align: start; }
-    .subbar { margin-top: 6px; }
-
-    .grid { gap: 14px; padding: 14px 0 32px; }
-    .card { border-radius: 18px; box-shadow: 0 1px 2px rgba(0,0,0,.04); }
-    .card:hover { transform: none; box-shadow: 0 1px 2px rgba(0,0,0,.04); }
+    .logo { font-size: 18px; } .logo .mark { height: 28px; }
+    .meta { width: 100%; }
+    .ftoggle { display: inline-flex; gap: 6px; align-items: center; background: var(--dark); color: var(--gold-hi); border: 0; border-radius: 999px; padding: 7px 14px; font-weight: 600; font-size: 13px; cursor: pointer; }
+    .filters { grid-template-columns: 1fr 1fr; display: none; margin-top: 8px; }
+    .bar.open .filters { display: grid; }
+    .filters .q { display: block; }
+    .bar .search-mobile { display: block; }
+    .grid { grid-template-columns: 1fr; gap: 14px; padding-top: 14px; }
     .ph { aspect-ratio: 16/10; }
-    .badge { top: 12px; left: 12px; font-size: 12px; font-weight: 600; }
-    .card .body { padding: 12px 16px 16px; display: grid; grid-template-columns: 1fr auto; column-gap: 12px; align-items: end; }
-    .card h3 { font-size: 16px; grid-column: 1 / -1; }
-    .card .sub { margin-top: 2px; }
-    .card .price { margin-top: 0; font-size: 18px; font-weight: 700; white-space: nowrap; }
-
-    /* Car page: full-bleed swipe gallery, sticky price bar */
-    .detail .top .wrap { padding-top: 10px; padding-bottom: 10px; }
     .dgrid.wrap { padding: 0; gap: 0; }
-    .dgrid { padding: 0 0 24px; }
     .stage { border-radius: 0; }
-    .nav { display: none; }
-    .count { bottom: 12px; right: 12px; font-size: 12px; font-weight: 600; }
-    .thumbs { padding: 10px 16px 2px; gap: 6px; }
-    .thumbs img { width: 64px; height: 48px; border-radius: 6px; }
-    .info { padding: 18px 16px 0; }
-    .info h2 { font-size: 26px; }
-    .info .price { font-size: 26px; margin-top: 14px; }
-    .feat { margin-top: 16px; }
-    .feat span { font-size: 12px; padding: 5px 10px; }
-    table { margin-top: 18px; font-size: 14px; }
-    td { padding: 11px 0; }
-    td:first-child { width: 48%; }
-    .src { display: none; }
-    .pricebar { display: flex; position: sticky; bottom: 0; z-index: 3; align-items: center; justify-content: space-between; gap: 12px;
-      margin-top: 24px; padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
-      background: rgba(250,247,240,.94); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); border-top: 1px solid var(--line); }
-    .pricebar b { display: block; font-size: 18px; line-height: 1.2; }
-    .pricebar small { color: var(--muted); font-size: 12px; }
-    .pricebar a { flex: none; padding: 10px 14px; border-radius: 12px; background: var(--gold-grad); color: var(--dark); text-decoration: none; font-size: 14px; font-weight: 600; }
-
-    footer { padding-bottom: calc(24px + env(safe-area-inset-bottom)); }
-    footer .wrap { flex-direction: column; align-items: center; text-align: center; gap: 10px; }
+    .info { padding: 16px 16px 0; }
+    .info h2 { font-size: 24px; }
+    .info .price { font-size: 26px; }
+    .actions .btn { flex: 1; }
+    footer .wrap { flex-direction: column; align-items: center; text-align: center; }
   }
 
   /* Password screen */
@@ -168,13 +123,12 @@
   body.locked { background: var(--dark); }
   body.locked .lock { display: flex; }
   .lock form { width: 100%; max-width: 360px; text-align: center; }
-  .lock .logo { font-size: 32px; margin-bottom: 14px; }
+  .lock .mark { display: block; height: 120px; width: auto; margin: 0 auto 22px; }
+  .lock .logo { font-size: 30px; margin-bottom: 14px; }
   .lock p { color: var(--on-dark-muted); margin: 0 0 22px; font-size: 14px; }
-  .lock input { width: 100%; background: #161618; border: 1px solid #2C2A26; color: var(--on-dark); border-radius: 10px;
-    padding: 12px 14px; font: inherit; font-size: 16px; outline: none; }
+  .lock input { width: 100%; background: #161618; border: 1px solid #2C2A26; color: var(--on-dark); border-radius: 10px; padding: 12px 14px; font-size: 16px; outline: none; }
   .lock input:focus { border-color: var(--gold-lo); }
-  .lock button[type=submit] { width: 100%; margin-top: 10px; background: var(--gold-grad); color: var(--dark); border: 0; border-radius: 10px;
-    padding: 12px; font: inherit; font-weight: 600; cursor: pointer; }
+  .lock button[type=submit] { width: 100%; margin-top: 10px; background: var(--gold-grad); color: var(--dark); border: 0; border-radius: 10px; padding: 12px; font-weight: 600; cursor: pointer; }
   .lock button[disabled] { opacity: .6; cursor: wait; }
   .lock .lock-cancel { display: inline-block; margin-top: 14px; color: var(--on-dark-muted); font-size: 13px; }
   .lock .err { color: #F08A80; font-size: 13px; min-height: 20px; margin-top: 10px; }
@@ -185,32 +139,42 @@
   <form id="lockForm" autocomplete="on" onsubmit="return false">
     <img class="mark" src="../assets/lion.svg" alt="">
     <h1 class="logo">LION MOTORS</h1>
-    <p id="lockLabel">Loading…</p>
-    <input id="lockInput" type="password" autocomplete="current-password" placeholder="Password" required disabled>
-    <button type="submit" id="lockBtn" disabled>Loading…</button>
-    <a href="./" id="lockCancel" class="lock-cancel" hidden>Cancel</a>
+    <p id="lockLabel">Загрузка…</p>
+    <input id="lockInput" type="password" autocomplete="current-password" placeholder="Пароль" required disabled>
+    <button type="submit" id="lockBtn" disabled>Загрузка…</button>
+    <a href="./" id="lockCancel" class="lock-cancel" hidden>Отмена</a>
     <div class="err" id="lockErr" role="alert"></div>
   </form>
 </section>
 
 <header>
   <div class="wrap">
-    <h1 class="logo"><a href="../" style="text-decoration:none"><img class="mark" src="../assets/lion.svg" alt=""><b style="font-weight:inherit">LION MOTORS</b></a></h1>
+    <h1 class="logo"><a href="../"><img class="mark" src="../assets/lion.svg" alt=""><b>LION MOTORS</b></a></h1>
     <div class="meta" id="meta"></div>
   </div>
 </header>
 
-<div class="bar">
+<div class="bar" id="bar">
   <div class="wrap">
-    <div class="chips" id="chips"></div>
+    <div class="filters" id="filters">
+      <input class="q" id="f-q" type="search" placeholder="Поиск: марка, модель, комплектация">
+      <select id="f-make"><option value="">Все марки</option></select>
+      <select id="f-model" disabled><option value="">Все модели</option></select>
+      <select id="f-yfrom"><option value="">Год от</option></select>
+      <select id="f-yto"><option value="">Год до</option></select>
+      <select id="f-price"><option value="">Цена до</option></select>
+      <select id="f-km"><option value="">Пробег до</option></select>
+      <select id="f-body"><option value="">Кузов</option></select>
+      <select id="f-gear"><option value="">Коробка</option></select>
+    </div>
     <div class="subbar">
-      <span id="found"></span>
-      <label class="sortwrap">Sort
-        <select id="sort" aria-label="Sort">
-          <option value="new">Newest first</option>
-          <option value="price-asc">Price: low to high</option>
-          <option value="price-desc">Price: high to low</option>
-          <option value="km">Lowest mileage</option>
+      <span><button class="ftoggle" id="ftoggle">Фильтры</button> <span id="found"></span> <button class="reset" id="reset" hidden>Сбросить</button></span>
+      <label>Сортировка
+        <select id="sort">
+          <option value="new">Сначала новые</option>
+          <option value="price-asc">Сначала дешёвые</option>
+          <option value="price-desc">Сначала дорогие</option>
+          <option value="km">Меньше пробег</option>
         </select>
       </label>
     </div>
@@ -219,18 +183,19 @@
 
 <main class="wrap">
   <div class="grid" id="grid"></div>
+  <button class="more" id="more" hidden>Показать ещё</button>
 </main>
 
-<footer><div class="wrap"><span>Prices are total prices in Japanese yen (incl. tax and fees) as listed in Japan. Availability changes daily. <a href="../legal/tokushoho.html" style="color:inherit">特定商取引法に基づく表記</a> · <a href="../legal/privacy.html" style="color:inherit">Privacy</a></span><span><button class="linkbtn" id="adminBtn">Admin</button> · <button class="linkbtn" id="logout">Log out</button></span></div></footer>
+<footer><div class="wrap"><span>Только леворульные автомобили из Японии. Цены в долларах — ориентир по текущему курсу, итог считается при заказе. <a href="../legal/tokushoho.html" style="color:inherit">特定商取引法に基づく表記</a> · <a href="../legal/privacy.html" style="color:inherit">Privacy</a></span><span><button class="linkbtn" id="adminBtn">Админ</button> · <button class="linkbtn" id="logout">Выйти</button></span></div></footer>
 
 <section class="detail" id="detail" aria-hidden="true">
-  <div class="top"><div class="wrap"><button class="back" id="back">← All cars</button><span class="dttl" id="dttl"></span></div></div>
+  <div class="top"><div class="wrap"><button class="back" id="back">← Все машины</button><span class="dttl" id="dttl"></span></div></div>
   <div class="wrap dgrid" id="dbody"></div>
 </section>
 
+<script src="../assets/company.js"></script>
 <script>
 // ---- Password gate: data.js holds AES-GCM blobs; keys come from PBKDF2-SHA256 (see scraper/seal.py).
-// Passwords are remembered only for this tab session, so every new visit asks again.
 const store = {
   get: (k) => { try { return sessionStorage.getItem(k); } catch (e) { return null; } },
   set: (k, v) => { try { sessionStorage.setItem(k, v); } catch (e) {} },
@@ -260,35 +225,27 @@ function askPassword(blob, label, button) {
     form.onsubmit = async (e) => {
       e.preventDefault();
       btn.disabled = true; err.textContent = "";
-      try {
-        const data = await decrypt(blob, input.value);
-        resolve([data, input.value]);
-      } catch (x) {
-        err.textContent = "Wrong password.";
-        input.select();
-      } finally { btn.disabled = false; }
+      try { resolve([await decrypt(blob, input.value), input.value]); }
+      catch (x) { err.textContent = "Неверный пароль."; input.select(); }
+      finally { btn.disabled = false; }
     };
   });
 }
 
-// Uses the password remembered in this browser if it still works, otherwise asks for it.
 async function unlock(storeKey, blob, label, button) {
   const saved = store.get(storeKey);
-  if (saved) {
-    try { return await decrypt(blob, saved); } catch (e) { store.del(storeKey); }
-  }
+  if (saved) { try { return await decrypt(blob, saved); } catch (e) { store.del(storeKey); } }
   const [data, pw] = await askPassword(blob, label, button);
   store.set(storeKey, pw);
   return data;
 }
 
-// Never keep a password in the address bar (older pages could submit the form natively).
+// Never keep a password in the address bar.
 (() => {
   const q = new URLSearchParams(location.search);
   if (q.has("password")) { q.delete("password"); history.replaceState(null, "", location.pathname + (q.toString() ? "?" + q : "") + location.hash); }
 })();
 
-// data.js changes daily (and when passwords change): load it with a cache-busting query.
 (() => {
   const el = document.createElement("script");
   el.src = "data.js?v=" + Math.floor(Date.now() / 60000);
@@ -298,19 +255,17 @@ async function unlock(storeKey, blob, label, button) {
 
 async function boot() {
   if (!window.CATALOG_ENC) {
-    document.getElementById("lockLabel").textContent = "Catalog is temporarily unavailable.";
+    document.getElementById("lockLabel").textContent = "Каталог временно недоступен.";
     document.getElementById("lockForm").querySelectorAll("input,button").forEach((el) => (el.hidden = true));
     return;
   }
-  const data = await unlock("catalog_pw", window.CATALOG_ENC, "Private catalog. Enter the password to continue.", "Open catalog");
-
-  // Admin mode (links to the source listing): open once with ?admin, turn off with ?admin=0.
+  const data = await unlock("catalog_pw", window.CATALOG_ENC, "Закрытый каталог. Введите пароль.", "Открыть каталог");
   const q = new URLSearchParams(location.search);
   if (q.get("admin") === "0") store.del("admin_pw");
   let sources = {};
   if (window.ADMIN_ENC && ((q.has("admin") && q.get("admin") !== "0") || store.get("admin_pw"))) {
-    document.getElementById("lockCancel").hidden = false;   // lets you go back to the normal catalog
-    sources = (await unlock("admin_pw", window.ADMIN_ENC, "Admin password", "Enable admin mode")).sources;
+    document.getElementById("lockCancel").hidden = false;
+    sources = (await unlock("admin_pw", window.ADMIN_ENC, "Пароль администратора", "Включить режим админа")).sources;
     document.getElementById("lockCancel").hidden = true;
   }
   if (q.has("admin")) history.replaceState(null, "", location.pathname + location.hash);
@@ -319,154 +274,143 @@ async function boot() {
 }
 
 function startCatalog(data, sources) {
-  const cars = data.cars;
   const $ = (id) => document.getElementById(id);
-  const yen = (n) => n == null ? "Price on request" : "¥" + n.toLocaleString("en-US");
-  const kmf = (n) => n == null ? "—" : n.toLocaleString("en-US") + " km";
-  const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
-  // Total payment in Japan (支払総額): vehicle price + taxes + registration/dealer fees.
-  const total = (c) => c.price_total_jpy ?? c.price_jpy;
-  const title = (c) => `${c.make} ${c.model}${c.grade ? " " + c.grade : ""}`;
-  const img = (src, fallback, alt, cls = "") =>
-    `<img src="${esc(src)}" ${fallback ? `onerror="this.onerror=null;this.src='${esc(fallback)}'"` : ""} alt="${esc(alt)}" loading="lazy" referrerpolicy="no-referrer" ${cls}>`;
+  const F = data.fields;
+  const cars = data.cars.map((row) => Object.fromEntries(F.map((k, i) => [k, row[i]])));
+  const rate = data.jpy_usd;
+  const usd = (jpy) => jpy == null ? null : Math.round(jpy * rate / 100) * 100;
+  const total = (c) => c.total_jpy ?? c.price_jpy;
+  const fmt = (n) => n.toLocaleString("ru-RU");
+  const money = (c) => { const v = usd(total(c)); return v == null ? "Цена по запросу" : "$" + fmt(v); };
+  const yen = (n) => n == null ? "" : "¥" + fmt(n);
+  const kmf = (n) => n == null ? "—" : fmt(n) + " км";
+  const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[ch]));
+  const title = (c) => `${c.make} ${c.model}`.trim();
+  cars.forEach((c) => (c._hay = `${c.make} ${c.model} ${c.grade}`.toLowerCase()));
 
-  let model = "All";
-  const updated = data.updated ? new Date(data.updated).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "";
-  $("meta").innerHTML = `Ferrari · 2024+ · under 50,000 km${updated ? `<span class="upd"> · updated ${esc(updated)}</span>` : ""}`;
+  const upd = data.updated ? new Date(data.updated).toLocaleDateString("ru-RU", { day: "numeric", month: "long", year: "numeric" }) : "";
+  $("meta").textContent = `${fmt(cars.length)} леворульных автомобилей · обновлено ${upd}`;
 
-  function renderChips() {
-    const counts = {};
-    cars.forEach((c) => (counts[c.model] = (counts[c.model] || 0) + 1));
-    const models = Object.keys(counts).sort();
-    $("chips").innerHTML = ["All", ...models].map((m) =>
-      `<button class="chip${m === model ? " on" : ""}" data-m="${esc(m)}">${esc(m)}<small>${m === "All" ? cars.length : counts[m]}</small></button>`).join("");
+  // ---- filter options
+  const countBy = (arr, key) => arr.reduce((m, c) => (c[key] && (m[c[key]] = (m[c[key]] || 0) + 1), m), {});
+  const fillSel = (sel, counts, sortByCount) => {
+    const keys = Object.keys(counts).sort(sortByCount ? (a, b) => counts[b] - counts[a] : (a, b) => a.localeCompare(b));
+    sel.insertAdjacentHTML("beforeend", keys.map((k) => `<option value="${esc(k)}">${esc(k)} (${counts[k]})</option>`).join(""));
+  };
+  fillSel($("f-make"), countBy(cars, "make"), false);
+  fillSel($("f-body"), countBy(cars, "body"), true);
+  fillSel($("f-gear"), countBy(cars, "gearbox"), true);
+  const years = [...new Set(cars.map((c) => c.year).filter(Boolean))].sort((a, b) => b - a);
+  for (const id of ["f-yfrom", "f-yto"]) $(id).insertAdjacentHTML("beforeend", years.map((y) => `<option>${y}</option>`).join(""));
+  $("f-price").insertAdjacentHTML("beforeend", [10000, 20000, 30000, 50000, 75000, 100000, 150000, 200000, 300000, 500000]
+    .map((v) => `<option value="${v}">до $${fmt(v)}</option>`).join(""));
+  $("f-km").insertAdjacentHTML("beforeend", [5000, 10000, 30000, 50000, 100000, 150000]
+    .map((v) => `<option value="${v}">до ${fmt(v)} км</option>`).join(""));
+
+  function refreshModels() {
+    const sel = $("f-model"), mk = $("f-make").value;
+    sel.innerHTML = '<option value="">Все модели</option>';
+    sel.disabled = !mk;
+    if (mk) fillSel(sel, countBy(cars.filter((c) => c.make === mk), "model"), false);
   }
 
-  function renderGrid() {
-    const sort = $("sort").value;
-    const list = cars.filter((c) => model === "All" || c.model === model).slice();
-    const P = (c) => total(c) ?? Infinity;
-    if (sort === "price-asc") list.sort((a, b) => P(a) - P(b));
-    if (sort === "price-desc") list.sort((a, b) => (total(b) ?? -1) - (total(a) ?? -1));
-    if (sort === "km") list.sort((a, b) => (a.mileage_km ?? 1e9) - (b.mileage_km ?? 1e9));
-    if (sort === "new") list.sort((a, b) => b.year - a.year || (a.mileage_km ?? 0) - (b.mileage_km ?? 0));
-    $("found").textContent = `${list.length} ${list.length === 1 ? "car" : "cars"}`;
-    $("grid").innerHTML = list.length ? list.map((c) => `
-      <button class="card" data-id="${esc(c.id)}">
-        <div class="ph">${c.thumbs[0] ? img(c.thumbs[0], null, title(c)) : ""}<span class="badge">${esc(c.year)}</span></div>
-        <div class="body">
-          <h3>${esc(title(c))}</h3>
-          <div class="sub">${kmf(c.mileage_km)}${c.color ? " · " + esc(c.color) : ""}</div>
-          <div class="price">${yen(total(c))}</div>
-        </div>
-      </button>`).join("") : `<div class="empty">No cars match right now.</div>`;
+  // ---- filtering, sorting, incremental rendering
+  const PAGE = 48;
+  let list = [], shown = 0;
+  function apply() {
+    const v = (id) => $(id).value;
+    const q = v("f-q").trim().toLowerCase().split(/\s+/).filter(Boolean);
+    const yf = +v("f-yfrom") || 0, yt = +v("f-yto") || 9999, pm = +v("f-price") || Infinity, km = +v("f-km") || Infinity;
+    list = cars.filter((c) =>
+      (!v("f-make") || c.make === v("f-make")) && (!v("f-model") || c.model === v("f-model")) &&
+      (!v("f-body") || c.body === v("f-body")) && (!v("f-gear") || c.gearbox === v("f-gear")) &&
+      (c.year || 0) >= yf && (c.year || 0) <= yt &&
+      (pm === Infinity || (usd(total(c)) ?? Infinity) <= pm) && (km === Infinity || (c.km ?? Infinity) <= km) &&
+      q.every((w) => c._hay.includes(w)));
+    const s = v("sort"), P = (c) => total(c) ?? Infinity;
+    if (s === "new") list.sort((a, b) => (b.year || 0) - (a.year || 0) || (a.km ?? 1e9) - (b.km ?? 1e9));
+    if (s === "price-asc") list.sort((a, b) => P(a) - P(b));
+    if (s === "price-desc") list.sort((a, b) => (total(b) ?? -1) - (total(a) ?? -1));
+    if (s === "km") list.sort((a, b) => (a.km ?? 1e9) - (b.km ?? 1e9));
+    $("found").textContent = `Найдено: ${fmt(list.length)}`;
+    $("reset").hidden = !["f-q", "f-make", "f-model", "f-yfrom", "f-yto", "f-price", "f-km", "f-body", "f-gear"].some((id) => $(id).value);
+    $("grid").innerHTML = list.length ? "" : '<div class="empty">Ничего не найдено. Попробуйте изменить фильтры.</div>';
+    shown = 0; renderMore();
   }
+  function card(c) {
+    return `<button class="card" data-id="${esc(c.id)}">
+      <div class="ph">${c.photo ? `<img src="${esc(c.photo)}" alt="${esc(title(c))}" loading="lazy" referrerpolicy="no-referrer">` : ""}${c.year ? `<span class="badge">${c.year}</span>` : ""}</div>
+      <div class="body">
+        <h3>${esc(title(c))}</h3>
+        ${c.grade ? `<div class="grade">${esc(c.grade)}</div>` : ""}
+        <div class="sub">${kmf(c.km)}${c.region ? " · " + esc(c.region) : ""}</div>
+        <div class="price"><b>${money(c)}</b><small>${yen(total(c))}</small></div>
+      </div></button>`;
+  }
+  function renderMore() {
+    const next = list.slice(shown, shown + PAGE);
+    $("grid").insertAdjacentHTML("beforeend", next.map(card).join(""));
+    shown += next.length;
+    $("more").hidden = shown >= list.length;
+  }
+  if ("IntersectionObserver" in window) {
+    new IntersectionObserver((es) => es.forEach((e) => e.isIntersecting && shown < list.length && renderMore()), { rootMargin: "800px" }).observe($("more"));
+  }
+  $("more").addEventListener("click", renderMore);
+  let t;
+  $("f-q").addEventListener("input", () => { clearTimeout(t); t = setTimeout(apply, 200); });
+  ["f-model", "f-yfrom", "f-yto", "f-price", "f-km", "f-body", "f-gear", "sort"].forEach((id) => $(id).addEventListener("change", apply));
+  $("f-make").addEventListener("change", () => { refreshModels(); apply(); });
+  $("reset").addEventListener("click", () => {
+    ["f-q", "f-make", "f-yfrom", "f-yto", "f-price", "f-km", "f-body", "f-gear"].forEach((id) => ($(id).value = ""));
+    refreshModels(); apply();
+  });
+  $("ftoggle").addEventListener("click", () => $("bar").classList.toggle("open"));
+  $("grid").addEventListener("click", (e) => { const b = e.target.closest(".card"); if (b) location.hash = "car-" + b.dataset.id; });
 
+  // ---- car page
   function openCar(id) {
     const c = cars.find((x) => x.id === id);
     if (!c) return closeCar();
-    let i = 0;
     const rows = [
-      ["Year", c.year], ["Mileage", kmf(c.mileage_km)], ["Exterior colour", c.color],
-      ["Body", c.body], ["Engine", c.engine_cc ? (c.engine_cc / 1000).toFixed(1) + " L" : ""],
-      ["Fuel", c.fuel], ["Transmission", c.transmission], ["Drive", c.drive], ["Steering", c.steering],
-      ["Accident history", c.accident_history], ["Import", c.import],
-      ["Japanese inspection valid until", c.inspection_until], ["Warranty until", c.warranty_until],
-      ["Location", c.location ? c.location + ", Japan" : ""],
-    ].filter(([, v]) => v !== "" && v != null && v !== "-" && v !== "−");
-    const n = c.photos.length;
-    const breakdown = c.price_total_jpy && c.price_jpy && c.price_total_jpy !== c.price_jpy
-      ? ` · vehicle ${yen(c.price_jpy)} + fees ${yen(c.price_total_jpy - c.price_jpy)}` : "";
-    const srcLink = sources[c.id]
-      ? `<a class="src" href="${esc(sources[c.id])}" target="_blank" rel="noopener noreferrer">Открыть на Goo-net ↗</a>` : "";
+      ["Год", c.year], ["Пробег", kmf(c.km)], ["Кузов", c.body], ["Цвет", c.color],
+      ["Двигатель", c.engine_cc ? (c.engine_cc / 1000).toFixed(1) + " л" : ""], ["Коробка", c.gearbox], ["Руль", "Левый"],
+      ["Следы ДТП (修復歴)", c.accident], ["Гарантия продавца", c.warranty], ["Техобслуживание перед продажей", c.service],
+      ["Японский техосмотр до", c.inspection], ["Где находится", c.region ? c.region + ", Япония" : "Япония"],
+    ].filter(([, v]) => v !== "" && v != null);
+    const W = window.COMPANY || {}, has = window.COMPANY_HAS || ((x) => !!x);
+    const carUrl = location.origin + location.pathname + "#car-" + c.id;
+    const msg = encodeURIComponent(`Здравствуйте! Интересует ${title(c)} ${c.year || ""}, ${money(c)}. ${carUrl}`);
+    const order = has(W.whatsapp) ? `https://wa.me/${W.whatsapp}?text=${msg}` : "../#contact";
     $("dttl").textContent = title(c);
     $("dbody").innerHTML = `
-      <div>
-        <div class="stage">
-          <div class="track" id="track">${c.photos.map((p, k) => `<div class="slide">${img(p, c.thumbs[k], `${title(c)}, photo ${k + 1}`)}</div>`).join("")}</div>
-          ${n > 1 ? `<button class="nav prev" aria-label="Previous photo">‹</button><button class="nav next" aria-label="Next photo">›</button>` : ""}
-          ${n ? `<span class="count" id="gcount">1 / ${n}</span>` : ""}
-        </div>
-        <div class="thumbs" id="thumbs">${c.thumbs.map((t, k) => img(t, null, "", `data-k="${k}"`)).join("")}</div>
-      </div>
+      <div><div class="stage">${c.photo ? `<img src="${esc(c.photo)}" alt="${esc(title(c))}" referrerpolicy="no-referrer">` : ""}</div></div>
       <div class="info">
         <h2>${esc(title(c))}</h2>
-        <div class="sub">${esc(c.year)} · ${kmf(c.mileage_km)}</div>
-        <div class="price">${yen(total(c))}</div>
-        <div class="price-note">Total price in Japan, incl. tax and fees${breakdown}</div>
-        ${srcLink}
-        ${c.features.length ? `<div class="feat">${c.features.map((f) => `<span>${esc(f)}</span>`).join("")}</div>` : ""}
+        ${c.grade ? `<div class="grade">${esc(c.grade)}</div>` : ""}
+        <div class="price">${money(c)}</div>
+        <div class="price-note">${total(c) != null ? `Цена в Японии с налогами: ${yen(total(c))}${c.price_jpy && c.price_jpy !== total(c) ? ` (машина ${yen(c.price_jpy)})` : ""}. Доставка и растаможка считаются отдельно.` : "Продавец не указал цену — уточним по запросу."}</div>
+        <div class="actions">
+          <a class="btn btn-gold" href="${esc(order)}" target="_blank" rel="noopener">Заказать</a>
+          ${sources[c.id] ? `<a class="btn btn-line" href="${esc(sources[c.id])}" target="_blank" rel="noopener noreferrer">Открыть на Carsensor ↗</a>` : ""}
+        </div>
         <table>${rows.map(([k, v]) => `<tr><td>${esc(k)}</td><td>${esc(v)}</td></tr>`).join("")}</table>
-      </div>
-      <div class="pricebar">
-        <div><b>${yen(total(c))}</b><small>Total price in Japan</small></div>
-        ${sources[c.id] ? `<a href="${esc(sources[c.id])}" target="_blank" rel="noopener noreferrer">Goo-net ↗</a>` : ""}
+        <p class="note">Курс: 1 ¥ = $${rate}. Информация с японской площадки, перед покупкой мы проверяем машину и наличие.</p>
       </div>`;
-
-    // Swipeable gallery: the track scrolls with snap; arrows/thumbs/keys scroll it.
-    const track = $("track"), thumbs = $("thumbs");
-    const go = (k) => n && track.scrollTo({ left: ((k + n) % n) * track.clientWidth, behavior: "smooth" });
-    const mark = () => {
-      if ($("gcount")) $("gcount").textContent = `${i + 1} / ${n}`;
-      thumbs.querySelectorAll("img").forEach((t) => t.classList.toggle("on", +t.dataset.k === i));
-      const t = thumbs.querySelector(`img[data-k="${i}"]`);
-      if (t) thumbs.scrollTo({ left: t.offsetLeft - thumbs.clientWidth / 2 + t.clientWidth / 2 });
-    };
-    track.addEventListener("scroll", () => {
-      const k = Math.round(track.scrollLeft / track.clientWidth);
-      if (k !== i && k >= 0 && k < n) { i = k; mark(); }
-    }, { passive: true });
-    $("dbody").querySelector(".prev")?.addEventListener("click", () => go(i - 1));
-    $("dbody").querySelector(".next")?.addEventListener("click", () => go(i + 1));
-    thumbs.addEventListener("click", (e) => e.target.dataset.k && go(+e.target.dataset.k));
-    mark();
-    $("detail").onscroll = () => $("detail").classList.toggle("scrolled", $("detail").scrollTop > 280);
-    document.onkeydown = (e) => {
-      if (!$("detail").classList.contains("open")) return;
-      if (e.key === "ArrowLeft") go(i - 1);
-      if (e.key === "ArrowRight") go(i + 1);
-      if (e.key === "Escape") location.hash = "";
-    };
-    $("detail").classList.add("open");
-    $("detail").setAttribute("aria-hidden", "false");
-    $("detail").scrollTop = 0;
-    $("detail").classList.remove("scrolled");
+    $("detail").classList.add("open"); $("detail").setAttribute("aria-hidden", "false"); $("detail").scrollTop = 0;
     document.body.style.overflow = "hidden";
   }
-
-  function closeCar() {
-    $("detail").classList.remove("open");
-    $("detail").setAttribute("aria-hidden", "true");
-    document.body.style.overflow = "";
-  }
-
-  function route() {
-    const m = location.hash.match(/^#car-(.+)$/);
-    m ? openCar(m[1]) : closeCar();
-  }
-
-  $("chips").addEventListener("click", (e) => {
-    const b = e.target.closest(".chip"); if (!b) return;
-    model = b.dataset.m; renderChips(); renderGrid();
-  });
-  $("sort").addEventListener("change", renderGrid);
-  $("grid").addEventListener("click", (e) => {
-    const b = e.target.closest(".card"); if (b) location.hash = "car-" + b.dataset.id;
-  });
+  function closeCar() { $("detail").classList.remove("open"); $("detail").setAttribute("aria-hidden", "true"); document.body.style.overflow = ""; }
+  const route = () => { const m = location.hash.match(/^#car-(.+)$/); m ? openCar(m[1]) : closeCar(); };
   $("back").addEventListener("click", () => (location.hash = ""));
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape" && $("detail").classList.contains("open")) location.hash = ""; });
   window.addEventListener("hashchange", route);
 
-  if (Object.keys(sources).length) $("adminBtn").textContent = "Admin ✓";
-  $("adminBtn").addEventListener("click", () => {
-    if (Object.keys(sources).length) return;
-    location.href = location.pathname + "?admin" + location.hash;
-  });
-  $("logout").addEventListener("click", () => {
-    store.del("catalog_pw"); store.del("admin_pw");
-    location.hash = ""; location.reload();
-  });
+  if (Object.keys(sources).length) $("adminBtn").textContent = "Админ ✓";
+  $("adminBtn").addEventListener("click", () => { if (!Object.keys(sources).length) location.href = location.pathname + "?admin" + location.hash; });
+  $("logout").addEventListener("click", () => { store.del("catalog_pw"); store.del("admin_pw"); location.hash = ""; location.reload(); });
 
-  renderChips(); renderGrid(); route();
+  apply(); route();
 }
 </script>
 </body>

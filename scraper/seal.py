@@ -46,3 +46,9 @@ def encrypt(obj, password):
     key = PBKDF2HMAC(algorithm=hashes.SHA256(), length=32, salt=salt, iterations=ITERATIONS).derive(password.encode())
     ct = AESGCM(key).encrypt(iv, json.dumps(obj, ensure_ascii=False).encode(), None)
     return {"v": 1, "iter": ITERATIONS, "salt": b64(salt), "iv": b64(iv), "ct": b64(ct)}
+
+
+def short_id(source_id):
+    """Stable public id that does not reveal the source listing number."""
+    import hashlib
+    return hashlib.sha1(("lion-motors:" + source_id).encode()).hexdigest()[:10]

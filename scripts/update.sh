@@ -1,11 +1,11 @@
 #!/bin/bash
-# Scrape Goo-net, then push site/catalog/data.js to GitHub (Pages redeploys automatically).
+# Scrape Carsensor (left-hand drive, all makes), then push site/catalog/data.js to GitHub (Pages redeploys automatically).
 set -euo pipefail
 cd "$(dirname "$0")/.."
 export PATH="/opt/miniconda3/bin:/usr/local/bin:/opt/homebrew/bin:/usr/bin:/bin:$PATH"
 
 echo "== $(date '+%Y-%m-%d %H:%M') =="
-python3 scraper/goonet.py
+python3 scraper/carsensor.py
 
 if git diff --quiet -- site/catalog/data.js; then
   echo "No changes."
